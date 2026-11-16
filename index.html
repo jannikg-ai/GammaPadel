@@ -1,65 +1,409 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="da">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CollegePadel</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f3f5f8;
-      margin: 0;
-      color: #172334;
-    }
-    header {
-      background: #123b35;
-      color: white;
-      padding: 24px;
-      text-align: center;
-    }
-    main {
-      max-width: 600px;
-      margin: 30px auto;
-      padding: 20px;
-    }
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 22px;
-      box-shadow: 0 2px 8px #0001;
-    }
-    button {
-      background: #123b35;
-      color: white;
-      border: 0;
-      padding: 12px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CollegePadel</title>
+<style>
+:root {
+  font-family: system-ui,-apple-system,sans-serif;
+  color:#17302b;
+  background:#f2f7f4;
+}
+* {box-sizing:border-box}
+body {margin:0}
+header {
+  background:#115e4a;
+  color:white;
+  padding:22px 18px;
+}
+main {
+  max-width:780px;
+  margin:24px auto;
+  padding:0 16px;
+}
+.card {
+  background:white;
+  border-radius:14px;
+  padding:22px;
+  margin:16px 0;
+  box-shadow:0 3px 16px #163e2912;
+}
+h1,h2 {margin:0 0 12px}
+h1 {font-size:27px}
+h2 {font-size:20px}
+label {
+  display:block;
+  margin:12px 0 5px;
+  font-weight:600;
+}
+input,select,button {font:inherit}
+input,select {
+  width:100%;
+  padding:12px;
+  border:1px solid #b7ccc3;
+  border-radius:8px;
+}
+button {
+  border:0;
+  border-radius:9px;
+  padding:12px 17px;
+  background:#13795c;
+  color:white;
+  cursor:pointer;
+  margin-top:12px;
+}
+button.secondary {
+  background:#e4eee9;
+  color:#194738;
+}
+button:disabled {
+  opacity:.5;
+  cursor:wait;
+}
+.muted {color:#65766e}
+.error {color:#a32828}
+.success {color:#14704b}
+.hidden {display:none}
+.game {
+  border-top:1px solid #e4ebe6;
+  padding:15px 0;
+}
+.game:first-child {border-top:0}
+.row {
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.small {font-size:14px}
+#notice {white-space:pre-wrap}
+</style>
 </head>
 <body>
-  <header>
+<header>
+  <div style="max-width:780px;margin:auto">
     <h1>🎾 CollegePadel</h1>
-    <p>Padel for kollegaer</p>
-  </header>
+    <div>Padel med kollegaerne</div>
+  </div>
+</header>
+<main>
+  <div id="notice" role="status"
+       aria-live="polite"></div>
 
-  <main>
-    <div class="card">
-      <h2>Velkommen til CollegePadel</h2>
-      <p>
-        Her kan vi snart arrangere kampe,
-        tilmelde spillere og holde styr på
-        vores padelaktiviteter.
-      </p>
+  <section id="auth" class="card">
+    <h2>Log ind</h2>
+    <p class="muted">
+      Kun inviterede kollegaer kan bruge appen.
+    </p>
+    <label for="email">Din personlige e-mail</label>
+    <input id="email" type="email"
+      autocomplete="email"
+      placeholder="navn@eksempel.dk">
 
-      <h3>Kommende kampe</h3>
-      <p>Ingen kampe oprettet endnu.</p>
+    <label for="password">Adgangskode</label>
+    <input id="password" type="password"
+      autocomplete="current-password">
 
-      <button onclick="alert('Kampoprettelse kommer i næste version')">
-        Opret kamp
+    <button id="login">Log ind</button>
+    <button id="reset" class="secondary">
+      Glemt adgangskode?
+    </button>
+    <p class="small muted">
+      Har du ikke en bruger endnu?
+      Bed administratoren om en invitation.
+    </p>
+  </section>
+
+  <div id="app" class="hidden">
+    <div class="card row">
+      <div>
+        <strong id="who"></strong>
+        <div class="muted small">Du er logget ind</div>
+      </div>
+      <button id="logout" class="secondary">
+        Log ud
       </button>
     </div>
-  </main>
+
+    <section class="card">
+      <h2>Opret kamp</h2>
+      <label for="date">Dato og tidspunkt</label>
+      <input id="date" type="datetime-local">
+
+      <label for="venue">Spillested</label>
+      <input id="venue" value="Skinderskovhallen"
+        maxlength="120">
+
+      <label for="note">
+        Bemærkning (valgfri)
+      </label>
+      <input id="note" maxlength="250"
+        placeholder="Fx niveau eller banebooking">
+
+      <button id="create">Opret kamp</button>
+      <p class="small muted">
+        Banen bookes separat via PadelDanmark.
+      </p>
+    </section>
+
+    <section class="card">
+      <div class="row">
+        <h2>Kommende kampe</h2>
+        <button id="refresh" class="secondary">
+          Opdatér
+        </button>
+      </div>
+      <div id="games">Indlæser kampe…</div>
+    </section>
+  </div>
+</main>
+
+<script type="module">
+import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const supabase=createClient(
+  'https://zxmztnkwgdfxndiqtaqm.supabase.co',
+  'sb_publishable_sb8XcRaa9VsJkb22GMX3_A__LeLdnt1'
+);
+
+const $=id=>document.getElementById(id);
+let currentUser=null;
+
+function message(text,bad=false){
+  $('notice').textContent=text;
+  $('notice').className=bad?'error':'success';
+}
+
+function errText(error){
+  return error?.message||'Der opstod en fejl.';
+}
+
+function el(tag,text,className){
+  const node=document.createElement(tag);
+  if(text!==undefined) node.textContent=text;
+  if(className) node.className=className;
+  return node;
+}
+
+async function refreshSession(){
+  const {data,error}=await supabase.auth.getUser();
+  currentUser=error?null:data.user;
+  $('auth').classList.toggle('hidden',!!currentUser);
+  $('app').classList.toggle('hidden',!currentUser);
+  if(currentUser){
+    $('who').textContent=currentUser.email||'Kollega';
+    await loadGames();
+  }
+}
+
+$('login').onclick=async()=>{
+  message('');
+  const email=$('email').value.trim();
+  const password=$('password').value;
+
+  if(!email||!password){
+    message('Udfyld e-mail og adgangskode.',true);
+    return;
+  }
+
+  const {error}=await supabase.auth.signInWithPassword({
+    email,password
+  });
+
+  if(error){
+    message('Login mislykkedes: '+errText(error),true);
+  }else{
+    await refreshSession();
+  }
+};
+
+$('reset').onclick=async()=>{
+  const email=$('email').value.trim();
+  if(!email){
+    message('Skriv din e-mail først.',true);
+    return;
+  }
+
+  const {error}=await supabase.auth.resetPasswordForEmail(
+    email,{
+      redirectTo:location.origin+location.pathname
+    }
+  );
+
+  message(
+    error?errText(error):
+    'Hvis adressen er registreret, modtager du en mail til nulstilling.',
+    !!error
+  );
+};
+
+$('logout').onclick=async()=>{
+  await supabase.auth.signOut();
+  message('Du er logget ud.');
+  await refreshSession();
+};
+
+$('create').onclick=async()=>{
+  if(!currentUser)return;
+
+  const date=$('date').value;
+  const venue=$('venue').value.trim();
+  const note=$('note').value.trim();
+
+  if(!date||!venue){
+    message('Vælg dato og spillested.',true);
+    return;
+  }
+
+  const when=new Date(date);
+  if(Number.isNaN(when.getTime())||when<=new Date()){
+    message('Vælg et tidspunkt i fremtiden.',true);
+    return;
+  }
+
+  const {error}=await supabase.from('games').insert({
+    created_by:currentUser.id,
+    starts_at:when.toISOString(),
+    location:venue,
+    notes:note||null
+  });
+
+  if(error){
+    message('Kunne ikke oprette kamp: '+errText(error),true);
+  }else{
+    message('Kampen er oprettet!');
+    $('note').value='';
+    await loadGames();
+  }
+};
+
+$('refresh').onclick=loadGames;
+
+async function loadGames(){
+  const root=$('games');
+  root.replaceChildren(
+    el('p','Indlæser kampe…','muted')
+  );
+
+  const {data:games,error}=await supabase
+    .from('games')
+    .select('id,starts_at,location,notes,created_by')
+    .gte('starts_at',new Date().toISOString())
+    .order('starts_at',{ascending:true});
+
+  if(error){
+    root.replaceChildren(
+      el('p','Kunne ikke hente kampe: '+errText(error),'error')
+    );
+    return;
+  }
+
+  if(!games?.length){
+    root.replaceChildren(
+      el('p','Ingen kommende kampe endnu.','muted')
+    );
+    return;
+  }
+
+  const {data:participants,error:pError}=await supabase
+    .from('game_participants')
+    .select('game_id,user_id')
+    .in('game_id',games.map(g=>g.id));
+
+  if(pError){
+    root.replaceChildren(
+      el('p','Kunne ikke hente tilmeldinger: '+errText(pError),'error')
+    );
+    return;
+  }
+
+  root.replaceChildren();
+
+  for(const game of games){
+    const players=(participants||[])
+      .filter(p=>p.game_id===game.id);
+
+    const joined=players.some(
+      p=>p.user_id===currentUser.id
+    );
+
+    const full=players.length>=4;
+    const card=el('div',undefined,'game');
+
+    const dt=new Date(game.starts_at).toLocaleString(
+      'da-DK',{
+        dateStyle:'full',
+        timeStyle:'short'
+      }
+    );
+
+    card.append(
+      el('strong',dt),
+      el('div',game.location),
+      el('div',`${players.length}/4 spillere`,'muted')
+    );
+
+    if(game.notes){
+      card.append(el('p',game.notes,'small'));
+    }
+
+    const btn=el(
+      'button',
+      joined?'Afmeld mig':
+      full?'Fuldt hold – 4/4':'Tilmeld mig'
+    );
+
+    btn.className=joined?'secondary':'';
+    btn.disabled=!joined&&full;
+
+    btn.onclick=async()=>{
+      btn.disabled=true;
+
+      const result=joined
+        ?await supabase.from('game_participants')
+          .delete()
+          .eq('game_id',game.id)
+          .eq('user_id',currentUser.id)
+        :await supabase.from('game_participants')
+          .insert({
+            game_id:game.id,
+            user_id:currentUser.id
+          });
+
+      if(result.error){
+        message(
+          'Tilmelding fejlede: '+errText(result.error),
+          true
+        );
+      }else{
+        message(
+          joined?'Du er afmeldt.':'Du er tilmeldt!'
+        );
+      }
+
+      await loadGames();
+    };
+
+    card.append(btn);
+    root.append(card);
+  }
+}
+
+supabase.auth.onAuthStateChange(()=>{
+  setTimeout(refreshSession,0);
+});
+
+const hash=new URLSearchParams(location.hash.slice(1));
+if(hash.get('type')==='recovery'){
+  message(
+    'Åbn linket fra mailen for at nulstille din adgangskode.'
+  );
+}
+
+await refreshSession();
+</script>
 </body>
 </html>
