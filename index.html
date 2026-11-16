@@ -131,7 +131,7 @@ button:disabled {
     <section class="card">
       <h2>Opret kamp</h2>
       <label for="date">Dato og tidspunkt</label>
-      <input id="date" type="datetime-local" step="60" required>
+      <input id="date" type="datetime-local" step="60" required onclick="this.showPicker()">
 
       <label for="venue">Spillested</label>
       <input id="venue" value="Skinderskovhallen"
