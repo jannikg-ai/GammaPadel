@@ -209,7 +209,7 @@ $('login').onclick=async()=>{
     return;
   }
 
-  const {error}=await supabase.auth.$('login').onclick({
+const {error}=await supabase.auth.signInWithPassword({
     email,password
   });
 
