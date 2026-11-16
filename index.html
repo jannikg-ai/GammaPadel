@@ -404,6 +404,61 @@ if(hash.get('type')==='recovery'){
 }
 
 await refreshSession();
+
+async function sendGameMessage(gameId, messageText) {
+  const text = messageText.trim();
+  if (!text) return;
+
+  const { data: { user }, error: authError } =
+    await supabase.auth.getUser();
+
+  if (authError || !user) {
+    message("Du skal være logget ind.", true);
+    return;
+  }
+
+  const { error } = await supabase
+    .from("game_messages")
+    .insert({
+      game_id: gameId,
+      user_id: user.id,
+      message: text
+    });
+
+  if (error) {
+    message("Chatfejl: " + error.message, true);
+    return;
+  }
+
+  message("Besked sendt!");
+}
+async function sendGameMessage(gameId, messageText) {
+  const text = messageText.trim();
+  if (!text) return;
+
+  const { data: { user }, error: authError } =
+    await supabase.auth.getUser();
+
+  if (authError || !user) {
+    message("Du skal være logget ind.", true);
+    return;
+  }
+
+  const { error } = await supabase
+    .from("game_messages")
+    .insert({
+      game_id: gameId,
+      user_id: user.id,
+      message: text
+    });
+
+  if (error) {
+    message("Chatfejl: " + error.message, true);
+    return;
+  }
+
+  message("Besked sendt!");
+}
 </script>
 </body>
 </html>
