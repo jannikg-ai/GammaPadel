@@ -6,7 +6,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>KollegaPadel</title>
 <style>
-:root{font-family:system-ui,-apple-system,sans-serif;color:#17302b;background:#f2f7f4}
+:root{
+font-family:system-ui,-apple-system,sans-serif;
+color:#17302b;
+background:#f2f7f4
+}
 *{box-sizing:border-box}
 body{margin:0}
 header{background:#115e4a;color:white;padding:24px 18px}
@@ -14,62 +18,255 @@ header>div{max-width:780px;margin:auto}
 h1{font-size:28px;margin:0 0 6px}
 h2{font-size:21px;margin:0 0 12px}
 main{max-width:780px;margin:24px auto;padding:0 16px}
-.card{background:white;border-radius:16px;padding:22px;margin:16px 0;box-shadow:0 3px 16px #163e2912}
+.card{
+background:white;
+border-radius:16px;
+padding:22px;
+margin:16px 0;
+box-shadow:0 3px 16px #163e2912
+}
 label{display:block;margin:15px 0 7px;font-weight:650}
 input,button{font:inherit}
-input{width:100%;padding:13px;border:1px solid #b7ccc3;border-radius:10px}
-button{border:0;border-radius:10px;padding:12px 17px;background:#13795c;color:white;cursor:pointer;margin-top:12px}
+input{
+width:100%;
+padding:13px;
+border:1px solid #b7ccc3;
+border-radius:10px
+}
+button{
+border:0;
+border-radius:10px;
+padding:12px 17px;
+background:#13795c;
+color:white;
+cursor:pointer;
+margin-top:12px
+}
 button.secondary{background:#e4eee9;color:#194738}
 button.danger{background:#b42332}
-button:disabled{opacity:.5;cursor:wait}
+button:disabled{opacity:.5;cursor:not-allowed}
 .muted{color:#65766e}
 .error{color:#a32828}
 .success{color:#14704b}
 .hidden{display:none!important}
 .small{font-size:14px}
-.row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+flex-wrap:wrap
+}
 #notice,.status{white-space:pre-wrap;margin:12px 0}
 #notice:empty{display:none}
 .actions{display:flex;gap:10px;flex-wrap:wrap}
+
+/* PERSONLIG KAMPOVERSIGT */
+.my-summary{
+background:linear-gradient(135deg,#12674f,#0b4938);
+color:white;
+border-radius:16px;
+padding:22px;
+margin-bottom:16px
+}
+.my-summary h2{color:white;margin:0 0 8px}
+.my-summary p{margin:0;opacity:.9}
+.my-number{
+font-size:44px;
+font-weight:800;
+line-height:1.2;
+margin:12px 0 4px
+}
+.my-label{font-size:14px;opacity:.9}
+.my-empty{
+padding:18px;
+background:#f3f8f5;
+border-radius:12px;
+color:#536e61
+}
+.my-game{
+border:1px solid #d9e9df;
+border-radius:13px;
+padding:15px;
+margin:12px 0;
+background:#f9fcfa
+}
+.my-game-date{
+font-weight:750;
+font-size:17px;
+color:#174b37
+}
+.my-game-meta{
+font-size:14px;
+color:#526c60;
+margin:6px 0
+}
+.my-game button{margin-top:12px}
+.section-intro{margin-top:-4px;margin-bottom:18px}
+
+/* BOOKINGDESIGN */
 .booking-card{border:1px solid #e2eee6}
-.booking-heading{display:flex;align-items:center;gap:12px;margin-bottom:22px}
-.booking-icon{background:#e3f4eb;border-radius:12px;padding:12px;font-size:24px}
+.booking-heading{
+display:flex;
+align-items:center;
+gap:12px;
+margin-bottom:22px
+}
+.booking-icon{
+background:#e3f4eb;
+border-radius:12px;
+padding:12px;
+font-size:24px
+}
 .booking-heading h2{margin:0}
 .booking-heading p{margin:5px 0 0}
 .booking-label{font-weight:700;margin:22px 0 11px}
 #date{background:#f8fbf9;min-height:50px}
-.time-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.duration-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.time-slot,.duration-slot{margin:0;background:#edf5f0;color:#235744;border:1px solid transparent;padding:13px 5px;font-weight:650;border-radius:10px}
-.time-slot.selected,.duration-slot.selected{background:#13795c;color:white;box-shadow:0 3px 10px #13795c30}
-.time-slot:focus-visible,.duration-slot:focus-visible{outline:3px solid #7dc9aa;outline-offset:2px}
-.booking-summary{background:#eaf6ef;border-radius:12px;padding:16px;margin:22px 0;color:#19563d}
+.time-grid{
+display:grid;
+grid-template-columns:repeat(4,minmax(0,1fr));
+gap:8px
+}
+.duration-grid{
+display:grid;
+grid-template-columns:repeat(3,minmax(0,1fr));
+gap:8px
+}
+.time-slot,.duration-slot{
+margin:0;
+background:#edf5f0;
+color:#235744;
+border:1px solid transparent;
+padding:13px 5px;
+font-weight:650;
+border-radius:10px
+}
+.time-slot.selected,.duration-slot.selected{
+background:#13795c;
+color:white;
+box-shadow:0 3px 10px #13795c30
+}
+.time-slot:focus-visible,.duration-slot:focus-visible{
+outline:3px solid #7dc9aa;
+outline-offset:2px
+}
+.booking-summary{
+background:#eaf6ef;
+border-radius:12px;
+padding:16px;
+margin:22px 0;
+color:#19563d
+}
 .booking-summary strong{display:block;margin-bottom:6px}
 .booking-summary span{font-weight:650}
-#create{width:100%;font-weight:700;font-size:17px;padding:16px}
+#create{
+width:100%;
+font-weight:700;
+font-size:17px;
+padding:16px
+}
 
-/* NYE KAMPKORT */
+/* FLOTTE KAMPKORT */
 #games{display:grid;gap:16px;margin-top:14px}
-.game{border:1px solid #e1ebe5;border-radius:17px;padding:19px;background:#fff;box-shadow:0 4px 16px #163e290c}
-.game-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
-.game-date{font-size:19px;font-weight:750;color:#173c30;margin-bottom:8px;text-transform:capitalize}
-.game-meta{display:flex;align-items:center;gap:7px;color:#536e61;font-size:14px;margin:5px 0}
-.game-count{min-width:83px;text-align:center;background:#e9f5ed;padding:12px 9px;border-radius:12px;color:#176347}
+.game{
+border:1px solid #e1ebe5;
+border-radius:17px;
+padding:19px;
+background:#fff;
+box-shadow:0 4px 16px #163e290c
+}
+.game-top{
+display:flex;
+justify-content:space-between;
+gap:12px;
+align-items:flex-start
+}
+.game-date{
+font-size:19px;
+font-weight:750;
+color:#173c30;
+margin-bottom:8px;
+text-transform:capitalize
+}
+.game-meta{
+display:flex;
+align-items:center;
+gap:7px;
+color:#536e61;
+font-size:14px;
+margin:5px 0
+}
+.game-count{
+min-width:83px;
+text-align:center;
+background:#e9f5ed;
+padding:12px 9px;
+border-radius:12px;
+color:#176347
+}
 .game-count strong{font-size:24px;display:block}
 .game-count span{font-size:11px}
-.game-progress{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:17px 0 9px}
-.game-progress span{height:8px;border-radius:20px;background:#e2ebe6}
+.game-progress{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:5px;
+margin:17px 0 9px
+}
+.game-progress span{
+height:8px;
+border-radius:20px;
+background:#e2ebe6
+}
 .game-progress span.filled{background:#13795c}
-.game-availability{font-size:13px;font-weight:650;color:#176347}
+.game-availability{
+font-size:13px;
+font-weight:650;
+color:#176347
+}
 .game-availability.full{color:#8b5e22}
-.game-note{background:#f7faf8;border-radius:8px;padding:10px;font-size:14px;margin:12px 0}
-.players{background:#f5f9f6;margin:15px 0;padding:13px;border-radius:10px}
+.game-note{
+background:#f7faf8;
+border-radius:8px;
+padding:10px;
+font-size:14px;
+margin:12px 0
+}
+.players{
+background:#f5f9f6;
+margin:15px 0;
+padding:13px;
+border-radius:10px
+}
 .players-title{font-weight:700;margin-bottom:8px}
-.player{display:flex;align-items:center;gap:9px;padding:6px 0}
-.player-avatar{display:grid;place-items:center;min-width:32px;height:32px;border-radius:50%;background:#dcefe4;color:#136447;font-weight:750;font-size:12px}
+.player{
+display:flex;
+align-items:center;
+gap:9px;
+padding:6px 0
+}
+.player-avatar{
+display:grid;
+place-items:center;
+min-width:32px;
+height:32px;
+border-radius:50%;
+background:#dcefe4;
+color:#136447;
+font-weight:750;
+font-size:12px
+}
 .game .actions button{flex:1;min-width:130px}
 .game .actions button.danger{flex:0 1 auto}
-.game-tag{font-size:12px;font-weight:750;background:#dff2e6;color:#11613f;border-radius:30px;padding:6px 9px;margin-top:10px;display:inline-block}
+.game-tag{
+font-size:12px;
+font-weight:750;
+background:#dff2e6;
+color:#11613f;
+border-radius:30px;
+padding:6px 9px;
+margin-top:10px;
+display:inline-block
+}
 @media(max-width:420px){
 .time-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .card{padding:17px}
@@ -79,233 +276,418 @@ button:disabled{opacity:.5;cursor:wait}
 }
 </style>
 </head>
+
 <body>
-<header><div>
+<header>
+<div>
 <h1>🎾 KollegaPadel</h1>
 <div>Padel for fællesskabet</div>
-</div></header>
+</div>
+</header>
+
 <main>
 <div id="notice" role="status" aria-live="polite"></div>
 
 <section id="auth" class="card">
 <h2>Log ind</h2>
-<p class="muted">Kun inviterede kollegaer kan bruge appen.</p>
+<p class="muted">
+Kun inviterede kollegaer kan bruge appen.
+</p>
 <label for="email">Din personlige e-mail</label>
-<input id="email" type="email" autocomplete="email" placeholder="navn@eksempel.dk">
+<input id="email" type="email" autocomplete="email"
+placeholder="navn@eksempel.dk">
 <label for="password">Adgangskode</label>
-<input id="password" type="password" autocomplete="current-password">
+<input id="password" type="password"
+autocomplete="current-password">
 <button id="login">Log ind</button>
-<button id="reset" class="secondary">Glemt adgangskode?</button>
-<p class="small muted">Har du ikke en bruger endnu? Kontakt administratoren.</p>
+<button id="reset" class="secondary">
+Glemt adgangskode?
+</button>
+<p class="small muted">
+Har du ikke en bruger endnu? Kontakt administratoren.
+</p>
 </section>
 
 <div id="app" class="hidden">
+
 <section class="card row">
-<div><strong id="who"></strong>
-<div class="small muted">Du er logget ind</div></div>
+<div>
+<strong id="who"></strong>
+<div class="small muted">Du er logget ind</div>
+</div>
 <button id="logout" class="secondary">Log ud</button>
+</section>
+
+<!-- NY FUNKTION: MINE KAMPE -->
+<section class="card">
+<div class="my-summary">
+<h2>🎾 Mine kampe</h2>
+<p>Dit personlige overblik</p>
+<div class="my-number" id="myCount">0</div>
+<div class="my-label">kommende kampe</div>
+</div>
+<div id="myGames" aria-live="polite">
+<p class="muted">Henter dine kampe…</p>
+</div>
 </section>
 
 <section class="card">
 <h2>Min spillerprofil</h2>
-<p class="small muted">Vælg det navn, som dine kollegaer skal se under de kampe, du tilmelder dig.</p>
+<p class="small muted">
+Vælg det navn, som dine kollegaer skal se
+under de kampe, du tilmelder dig.
+</p>
 <label for="displayName">Dit spillernavn</label>
-<input id="displayName" maxlength="80" autocomplete="name" placeholder="Fx Peter Jensen">
+<input id="displayName" maxlength="80"
+autocomplete="name" placeholder="Fx Peter Jensen">
 <button id="saveName">Gem navn</button>
 <p id="profileStatus" class="small muted status"></p>
 </section>
 
 <section class="card booking-card">
 <div class="booking-heading">
-<div class="booking-icon" aria-hidden="true">🎾</div>
-<div><h2>Opret ny kamp</h2>
-<p class="small muted">Find en dato, og invitér kollegaerne</p></div>
+<div class="booking-icon">🎾</div>
+<div>
+<h2>Opret ny kamp</h2>
+<p class="small muted">
+Find en dato, og invitér kollegaerne
+</p>
 </div>
-<label for="date" class="booking-label">📅 Vælg kampdato</label>
+</div>
+
+<label for="date" class="booking-label">
+📅 Vælg kampdato
+</label>
 <input id="date" type="date" required>
-<div class="booking-label" id="startLabel">🕒 Kampstart</div>
-<div id="timeGrid" class="time-grid" role="group" aria-labelledby="startLabel"></div>
+
+<div class="booking-label" id="startLabel">
+🕒 Kampstart
+</div>
+<div id="timeGrid" class="time-grid"
+role="group" aria-labelledby="startLabel"></div>
 <input id="startTime" type="hidden" value="10:00">
-<div class="booking-label" id="durationLabel">Hvor længe spiller I?</div>
-<div id="durationGrid" class="duration-grid" role="group" aria-labelledby="durationLabel">
-<button type="button" class="duration-slot selected" data-minutes="60" aria-pressed="true">60 min</button>
-<button type="button" class="duration-slot" data-minutes="90" aria-pressed="false">90 min</button>
-<button type="button" class="duration-slot" data-minutes="120" aria-pressed="false">120 min</button>
+
+<div class="booking-label" id="durationLabel">
+Hvor længe spiller I?
+</div>
+<div id="durationGrid" class="duration-grid"
+role="group" aria-labelledby="durationLabel">
+<button type="button" class="duration-slot selected"
+data-minutes="60" aria-pressed="true">60 min</button>
+<button type="button" class="duration-slot"
+data-minutes="90" aria-pressed="false">90 min</button>
+<button type="button" class="duration-slot"
+data-minutes="120" aria-pressed="false">120 min</button>
 </div>
 <input id="endTime" type="hidden" value="11:00">
-<div class="booking-summary" role="status" aria-live="polite">
-<strong>Din kamp</strong><span id="bookingSummary"></span>
+
+<div class="booking-summary" role="status"
+aria-live="polite">
+<strong>Din kamp</strong>
+<span id="bookingSummary"></span>
 </div>
+
 <label for="venue">📍 Spillested</label>
-<input id="venue" value="Skinderskovhallen" maxlength="120">
+<input id="venue" value="Skinderskovhallen"
+maxlength="120">
+
 <label for="note">Bemærkning (valgfri)</label>
-<input id="note" maxlength="250" placeholder="Fx niveau eller banebooking">
+<input id="note" maxlength="250"
+placeholder="Fx niveau eller banebooking">
+
 <button id="create">Opret kamp</button>
-<p class="small muted">Banen bookes separat via PadelDanmark.</p>
+<p class="small muted">
+Banen bookes separat via PadelDanmark.
+</p>
 </section>
 
 <section class="card">
 <div class="row">
 <h2>Kommende kampe</h2>
-<button id="refresh" class="secondary">Opdatér</button>
+<button id="refresh" class="secondary">
+Opdatér
+</button>
 </div>
 <div id="games"></div>
 </section>
+
 </div>
 </main>
 
 <script type="module">
-import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import {createClient} from
+'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
 const supabase=createClient(
 'https://zxmztnkwgdfxndiqtaqm.supabase.co',
 'sb_publishable_sb8XcRaa9VsJkb22GMX3_A__LeLdnt1'
 );
+
 const $=id=>document.getElementById(id);
-let currentUser=null,profileRequest=0,gamesRequest=0;
+let currentUser=null;
+let profileRequest=0;
+let gamesRequest=0;
 
 function message(text,bad=false){
 const box=$('notice');
 box.textContent=text;
 box.className=bad?'error':'success';
 }
-function errorText(e){return e?.message||'Ukendt fejl'}
+
+function errorText(e){
+return e?.message||'Ukendt fejl';
+}
+
 function profileError(e){
 const raw=errorText(e);
-if(e?.code==='42501'||/row.level security|permission denied|policy/i.test(raw))
-return 'Adgang nægtet i Supabase. Kontrollér SQL-politikkerne. '+raw;
-if(e?.code==='42P01'||e?.code==='PGRST205')return 'Tabellen profiles findes ikke. '+raw;
-if(e?.code==='42703')return 'Kolonnen display_name mangler. '+raw;
+if(e?.code==='42501'||
+/row.level security|permission denied|policy/i.test(raw)){
+return 'Adgang nægtet i Supabase. '+raw;
+}
 return raw;
 }
+
 function el(tag,text,className){
 const n=document.createElement(tag);
 if(text!==undefined)n.textContent=text;
 if(className)n.className=className;
 return n;
 }
+
 function setProfileStatus(text,bad=false){
 $('profileStatus').textContent=text;
-$('profileStatus').className=bad?'small error status':'small muted status';
+$('profileStatus').className=
+bad?'small error status':'small muted status';
 }
 
-// LOGIN
+function formatDate(date){
+return new Date(date).toLocaleDateString('da-DK',{
+weekday:'long',
+day:'numeric',
+month:'long',
+year:'numeric'
+});
+}
+
+function formatTime(date){
+return new Date(date).toLocaleTimeString('da-DK',{
+hour:'2-digit',
+minute:'2-digit'
+});
+}
+
+/* LOGIN */
 async function refreshSession(){
 const {data,error}=await supabase.auth.getUser();
-if(error)console.warn('Session:',error.message);
+if(error)console.warn(error.message);
+
 const user=error?null:data.user;
 const oldId=currentUser?.id;
 currentUser=user;
+
 $('auth').classList.toggle('hidden',!!user);
 $('app').classList.toggle('hidden',!user);
+
 if(!user){
-++profileRequest;++gamesRequest;
+++profileRequest;
+++gamesRequest;
 $('displayName').value='';
 $('profileStatus').textContent='';
+$('myCount').textContent='0';
+$('myGames').replaceChildren();
+$('games').replaceChildren();
 return;
 }
+
 $('who').textContent=user.email||'Kollega';
-if(oldId!==user.id)await loadProfile();
+
+if(oldId!==user.id){
+await loadProfile();
+}
 await loadGames();
 }
 
 $('login').onclick=async()=>{
-const email=$('email').value.trim(),password=$('password').value;
-if(!email||!password){message('Udfyld e-mail og adgangskode.',true);return}
-const b=$('login');b.disabled=true;
+const email=$('email').value.trim();
+const password=$('password').value;
+
+if(!email||!password){
+message('Udfyld e-mail og adgangskode.',true);
+return;
+}
+
+const b=$('login');
+b.disabled=true;
+
 try{
-const {error}=await supabase.auth.signInWithPassword({email,password});
+const {error}=await supabase.auth.signInWithPassword({
+email,password
+});
 if(error)throw error;
 message('Du er logget ind!');
 await refreshSession();
-}catch(e){message('Login mislykkedes: '+errorText(e),true)}
-finally{b.disabled=false}
+}catch(e){
+message('Login mislykkedes: '+errorText(e),true);
+}finally{
+b.disabled=false;
+}
 };
+
 $('password').addEventListener('keydown',e=>{
 if(e.key==='Enter')$('login').click();
 });
+
 $('reset').onclick=async()=>{
 const email=$('email').value.trim();
-if(!email){message('Skriv din e-mail først.',true);return}
+if(!email){
+message('Skriv din e-mail først.',true);
+return;
+}
 try{
-const {error}=await supabase.auth.resetPasswordForEmail(email,{
+const {error}=await supabase.auth.resetPasswordForEmail(
+email,{
 redirectTo:location.origin+location.pathname
 });
 if(error)throw error;
-message('Hvis e-mailen er registreret, modtager du et link til nulstilling.');
-}catch(e){message(errorText(e),true)}
+message('Hvis e-mailen er registreret, modtager du et link.');
+}catch(e){
+message(errorText(e),true);
+}
 };
+
 $('logout').onclick=async()=>{
 const {error}=await supabase.auth.signOut();
-if(error){message(errorText(error),true);return}
+if(error){
+message(errorText(error),true);
+return;
+}
 currentUser=null;
 message('Du er logget ud.');
 await refreshSession();
 };
 
-// SPILLERPROFIL
+/* SPILLERPROFIL */
 async function loadProfile(){
 if(!currentUser)return;
-const userId=currentUser.id,request=++profileRequest;
+const userId=currentUser.id;
+const request=++profileRequest;
 setProfileStatus('Henter spillerprofil…');
+
 const {data,error}=await supabase.from('profiles')
-.select('display_name').eq('id',userId).maybeSingle();
-if(currentUser?.id!==userId||request!==profileRequest)return;
-if(error){setProfileStatus('Kunne ikke hente profil: '+profileError(error),true);return}
-const name=data?.display_name||currentUser.user_metadata?.display_name||'';
-$('displayName').value=name;
-setProfileStatus(name?'Dit nuværende spillernavn: '+name:'Skriv dit navn og tryk Gem navn.');
+.select('display_name')
+.eq('id',userId)
+.maybeSingle();
+
+if(currentUser?.id!==userId||
+request!==profileRequest)return;
+
+if(error){
+setProfileStatus(
+'Kunne ikke hente profil: '+profileError(error),true
+);
+return;
 }
+
+const name=data?.display_name||
+currentUser.user_metadata?.display_name||'';
+
+$('displayName').value=name;
+setProfileStatus(name?
+'Dit nuværende spillernavn: '+name:
+'Skriv dit navn og tryk Gem navn.');
+}
+
 $('saveName').onclick=async()=>{
 if(!currentUser)return;
+
 const name=$('displayName').value.trim();
 if(!name||name.length>80){
-setProfileStatus('Skriv et navn på højst 80 tegn.',true);return;
+setProfileStatus('Skriv et navn på højst 80 tegn.',true);
+return;
 }
-const userId=currentUser.id,b=$('saveName');b.disabled=true;
+
+const userId=currentUser.id;
+const b=$('saveName');
+b.disabled=true;
 setProfileStatus('Gemmer spillernavn…');
+
 try{
 const {error}=await supabase.from('profiles').upsert({
-id:userId,display_name:name
+id:userId,
+display_name:name
 },{onConflict:'id'});
 if(error)throw error;
-const {data:saved,error:readError}=await supabase.from('profiles')
-.select('display_name').eq('id',userId).single();
+
+const {data:saved,error:readError}=
+await supabase.from('profiles')
+.select('display_name')
+.eq('id',userId)
+.single();
+
 if(readError)throw readError;
-if(saved?.display_name!==name)throw new Error('Navnet kunne ikke bekræftes i databasen.');
-const {data:authData,error:metaError}=await supabase.auth.updateUser({
+if(saved?.display_name!==name){
+throw new Error('Navnet kunne ikke bekræftes.');
+}
+
+const {data:authData,error:metaError}=
+await supabase.auth.updateUser({
 data:{display_name:name}
 });
-if(metaError)console.warn('Metadata:',metaError.message);
+
+if(metaError)console.warn(metaError.message);
 if(currentUser?.id!==userId)return;
 if(authData?.user)currentUser=authData.user;
+
 setProfileStatus('✓ Dit spillernavn er gemt!');
 $('profileStatus').className='small success';
 message('Dit spillernavn er opdateret!');
 await loadGames();
+
 }catch(e){
 if(currentUser?.id!==userId)return;
-setProfileStatus('Kunne ikke gemme navn: '+profileError(e),true);
+setProfileStatus(
+'Kunne ikke gemme navn: '+profileError(e),true
+);
 message('Kunne ikke gemme navn: '+profileError(e),true);
-}finally{b.disabled=false}
+}finally{
+b.disabled=false;
+}
 };
 
-// DATO OG TID
-const times=Array.from({length:15},(_,i)=>String(i+8).padStart(2,'0')+':00');
+/* BOOKINGTIDSPUNKTER */
+const times=Array.from({length:15},(_,i)=>
+String(i+8).padStart(2,'0')+':00'
+);
+
 let durationMinutes=60;
+
 function updateBookingSummary(){
-const date=$('date').value,start=$('startTime').value;
-const m=Number(start.slice(0,2))*60+Number(start.slice(3))+durationMinutes;
-const end=String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+const date=$('date').value;
+const start=$('startTime').value;
+
+const m=Number(start.slice(0,2))*60+
+Number(start.slice(3))+durationMinutes;
+
+const end=String(Math.floor(m/60)).padStart(2,'0')+
+':'+String(m%60).padStart(2,'0');
+
 $('endTime').value=end;
+
 const d=new Date(date+'T12:00:00');
-const dateText=date&&!Number.isNaN(d.getTime())
-?d.toLocaleDateString('da-DK',{day:'numeric',month:'long',year:'numeric'}):'Vælg dato';
-$('bookingSummary').textContent=`${dateText} · ${start}–${end}`;
+const dateText=date&&!Number.isNaN(d.getTime())?
+d.toLocaleDateString('da-DK',{
+day:'numeric',month:'long',year:'numeric'
+}):'Vælg dato';
+
+$('bookingSummary').textContent=
+`${dateText} · ${start}–${end}`;
 }
+
 for(const time of times){
 const b=el('button',time,'time-slot');
-b.type='button';b.dataset.time=time;
+b.type='button';
+b.dataset.time=time;
+
 b.onclick=()=>{
 $('startTime').value=time;
 document.querySelectorAll('.time-slot').forEach(x=>{
@@ -315,10 +697,12 @@ x.setAttribute('aria-pressed',String(active));
 });
 updateBookingSummary();
 };
+
 b.setAttribute('aria-pressed',String(time==='10:00'));
 if(time==='10:00')b.classList.add('selected');
 $('timeGrid').append(b);
 }
+
 document.querySelectorAll('.duration-slot').forEach(b=>{
 b.onclick=()=>{
 durationMinutes=Number(b.dataset.minutes);
@@ -330,175 +714,481 @@ x.setAttribute('aria-pressed',String(active));
 updateBookingSummary();
 };
 });
+
 const today=new Date();
-$('date').value=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+$('date').value=[
+today.getFullYear(),
+String(today.getMonth()+1).padStart(2,'0'),
+String(today.getDate()).padStart(2,'0')
+].join('-');
 $('date').min=$('date').value;
 $('date').addEventListener('change',updateBookingSummary);
 updateBookingSummary();
 
-// OPRET KAMP
+/* OPRET KAMP */
 $('create').onclick=async()=>{
 if(!currentUser)return;
-const date=$('date').value,start=$('startTime').value,end=$('endTime').value;
-const venue=$('venue').value.trim(),note=$('note').value.trim();
-if(!date||!start||!end||!venue){message('Udfyld alle nødvendige felter.',true);return}
+
+const date=$('date').value;
+const start=$('startTime').value;
+const end=$('endTime').value;
+const venue=$('venue').value.trim();
+const note=$('note').value.trim();
+
+if(!date||!start||!end||!venue){
+message('Udfyld alle nødvendige felter.',true);
+return;
+}
+
 const startsAt=new Date(`${date}T${start}`);
 const endsAt=new Date(`${date}T${end}`);
-if(Number.isNaN(startsAt.getTime())||startsAt<=new Date()){
-message('Kampstart skal ligge i fremtiden.',true);return;
+
+if(Number.isNaN(startsAt.getTime())||
+startsAt<=new Date()){
+message('Kampstart skal ligge i fremtiden.',true);
+return;
 }
-if(Number.isNaN(endsAt.getTime())||endsAt<=startsAt){
-message('Sluttidspunkt skal være efter kampstart.',true);return;
+
+if(Number.isNaN(endsAt.getTime())||
+endsAt<=startsAt){
+message('Sluttidspunkt skal være efter kampstart.',true);
+return;
 }
-const b=$('create');b.disabled=true;
+
+const b=$('create');
+b.disabled=true;
+
 try{
 const {error}=await supabase.from('games').insert({
 created_by:currentUser.id,
 starts_at:startsAt.toISOString(),
 ends_at:endsAt.toISOString(),
-location:venue,notes:note||null
+location:venue,
+notes:note||null
 });
+
 if(error)throw error;
 $('note').value='';
 message('Kampen er oprettet!');
 await loadGames();
-}catch(e){message('Kunne ikke oprette kamp: '+errorText(e),true)}
-finally{b.disabled=false}
+
+}catch(e){
+message('Kunne ikke oprette kamp: '+errorText(e),true);
+}finally{
+b.disabled=false;
+}
 };
 
-// KAMPKORT
+/* TILMELDING OG AFMELDING */
+async function changeParticipation(gameId,joined,button){
+if(!currentUser)return;
+
+const userId=currentUser.id;
+button.disabled=true;
+
+try{
+let result;
+
+if(joined){
+result=await supabase.from('game_participants')
+.delete()
+.eq('game_id',gameId)
+.eq('user_id',userId);
+}else{
+result=await supabase.from('game_participants')
+.insert({
+game_id:gameId,
+user_id:userId
+});
+}
+
+if(result.error)throw result.error;
+
+message(joined?
+'Du er afmeldt kampen.':
+'Du er tilmeldt kampen!');
+
+}catch(e){
+message('Tilmelding fejlede: '+errorText(e),true);
+}finally{
+await loadGames();
+}
+}
+
+/* NY FUNKTION: MINE KAMPE */
+function renderMyGames(games,participants,userId){
+const root=$('myGames');
+root.replaceChildren();
+
+const myIds=new Set(
+participants
+.filter(p=>p.user_id===userId)
+.map(p=>String(p.game_id))
+);
+
+const myGames=games.filter(g=>myIds.has(String(g.id)));
+
+$('myCount').textContent=String(myGames.length);
+
+if(!myGames.length){
+root.append(el(
+'div',
+'Du er endnu ikke tilmeldt nogen kommende kampe. Find en kamp længere nede og tryk Tilmeld mig.',
+'my-empty'
+));
+return;
+}
+
+root.append(el(
+'p',
+'Her kan du se dine tilmeldinger og afmelde dig.',
+'small muted section-intro'
+));
+
+for(const game of myGames){
+const card=el('article',undefined,'my-game');
+
+card.append(el(
+'div',
+formatDate(game.starts_at),
+'my-game-date'
+));
+
+card.append(el(
+'div',
+'🕒 '+formatTime(game.starts_at)+
+(game.ends_at?' – '+formatTime(game.ends_at):''),
+'my-game-meta'
+));
+
+card.append(el(
+'div',
+'📍 '+(game.location||'Ikke angivet'),
+'my-game-meta'
+));
+
+const count=participants.filter(
+p=>String(p.game_id)===String(game.id)
+).length;
+
+card.append(el(
+'div',
+`👥 ${count}/4 spillere tilmeldt`,
+'my-game-meta'
+));
+
+const button=el('button','Afmeld mig','secondary');
+button.onclick=()=>changeParticipation(
+game.id,true,button
+);
+
+card.append(button);
+root.append(card);
+}
+}
+
+/* ALLE KOMMENDE KAMPE */
 $('refresh').onclick=loadGames;
+
 async function loadGames(){
 if(!currentUser)return;
-const userId=currentUser.id,request=++gamesRequest,root=$('games');
-root.replaceChildren(el('p','Indlæser kampe…','muted'));
-const outdated=()=>currentUser?.id!==userId||request!==gamesRequest;
+
+const userId=currentUser.id;
+const request=++gamesRequest;
+const root=$('games');
+
+root.replaceChildren(el(
+'p','Indlæser kampe…','muted'
+));
+
+const outdated=()=>
+currentUser?.id!==userId||request!==gamesRequest;
+
 const {data:games,error}=await supabase.from('games')
 .select('id,starts_at,ends_at,location,notes,created_by')
 .gte('starts_at',new Date().toISOString())
 .order('starts_at',{ascending:true});
+
 if(outdated())return;
-if(error){root.replaceChildren(el('p','Kunne ikke hente kampe: '+errorText(error),'error'));return}
-if(!games?.length){root.replaceChildren(el('p','Ingen kommende kampe endnu.','muted'));return}
-const {data:participants,error:pError}=await supabase.from('game_participants')
-.select('game_id,user_id').in('game_id',games.map(g=>g.id));
-if(outdated())return;
-if(pError){root.replaceChildren(el('p','Kunne ikke hente tilmeldinger: '+errorText(pError),'error'));return}
-const playerIds=[...new Set((participants||[]).map(p=>p.user_id))];
-let names=new Map(),namesError=null;
-if(playerIds.length){
-const {data:profiles,error:profileErr}=await supabase.from('profiles')
-.select('id,display_name').in('id',playerIds);
-if(outdated())return;
-if(profileErr)namesError=profileErr;
-else names=new Map((profiles||[]).map(p=>[p.id,p.display_name]));
+
+if(error){
+root.replaceChildren(el(
+'p',
+'Kunne ikke hente kampe: '+errorText(error),
+'error'
+));
+$('myGames').replaceChildren(el(
+'p','Kunne ikke hente dine kampe.','error'
+));
+return;
 }
+
+if(!games?.length){
+$('myCount').textContent='0';
+$('myGames').replaceChildren(el(
+'div','Ingen kommende tilmeldinger.','my-empty'
+));
+root.replaceChildren(el(
+'p','Ingen kommende kampe endnu.','muted'
+));
+return;
+}
+
+const {data:participants,error:pError}=
+await supabase.from('game_participants')
+.select('game_id,user_id')
+.in('game_id',games.map(g=>g.id));
+
+if(outdated())return;
+
+if(pError){
+root.replaceChildren(el(
+'p',
+'Kunne ikke hente tilmeldinger: '+errorText(pError),
+'error'
+));
+$('myGames').replaceChildren(el(
+'p','Kunne ikke hente dine tilmeldinger.','error'
+));
+return;
+}
+
+const allParticipants=participants||[];
+
+/* OPDATER MINE KAMPE */
+renderMyGames(games,allParticipants,userId);
+
+/* HENT SPILLERNAVNE */
+const playerIds=[
+...new Set(allParticipants.map(p=>p.user_id))
+];
+
+let names=new Map();
+let namesError=null;
+
+if(playerIds.length){
+const {data:profiles,error:profileErr}=
+await supabase.from('profiles')
+.select('id,display_name')
+.in('id',playerIds);
+
+if(outdated())return;
+
+if(profileErr){
+namesError=profileErr;
+}else{
+names=new Map(
+(profiles||[]).map(p=>[p.id,p.display_name])
+);
+}
+}
+
 root.replaceChildren();
-if(namesError)root.append(el('p','Spillernavne kunne ikke hentes: '+profileError(namesError),'small error'));
+
+if(namesError){
+root.append(el(
+'p',
+'Spillernavne kunne ikke hentes: '+
+profileError(namesError),
+'small error'
+));
+}
 
 for(const game of games){
-const players=(participants||[]).filter(p=>p.game_id===game.id);
+const players=allParticipants.filter(
+p=>String(p.game_id)===String(game.id)
+);
+
 const joined=players.some(p=>p.user_id===userId);
 const full=players.length>=4;
-const card=el('article',undefined,'game');
-const startDate=new Date(game.starts_at);
-const dateText=startDate.toLocaleDateString('da-DK',{
-weekday:'long',day:'numeric',month:'long',year:'numeric'
-});
-const startText=startDate.toLocaleTimeString('da-DK',{hour:'2-digit',minute:'2-digit'});
-const endText=game.ends_at?new Date(game.ends_at).toLocaleTimeString('da-DK',{hour:'2-digit',minute:'2-digit'}):null;
 
+const card=el('article',undefined,'game');
 const top=el('div',undefined,'game-top');
 const info=el('div');
-info.append(el('div',dateText,'game-date'));
-info.append(el('div','🕒 '+startText+(endText?' – '+endText:''),'game-meta'));
-info.append(el('div','📍 '+(game.location||'Ikke angivet'),'game-meta'));
-if(joined)info.append(el('span','✓ Du er tilmeldt','game-tag'));
+
+info.append(el(
+'div',
+formatDate(game.starts_at),
+'game-date'
+));
+
+info.append(el(
+'div',
+'🕒 '+formatTime(game.starts_at)+
+(game.ends_at?' – '+formatTime(game.ends_at):''),
+'game-meta'
+));
+
+info.append(el(
+'div',
+'📍 '+(game.location||'Ikke angivet'),
+'game-meta'
+));
+
+if(joined){
+info.append(el(
+'span','✓ Du er tilmeldt','game-tag'
+));
+}
+
 const count=el('div',undefined,'game-count');
-count.append(el('strong',`${players.length}/4`),el('span','SPILLERE'));
-top.append(info,count);card.append(top);
+count.append(
+el('strong',`${players.length}/4`),
+el('span','SPILLERE')
+);
+
+top.append(info,count);
+card.append(top);
 
 const progress=el('div',undefined,'game-progress');
-progress.setAttribute('aria-label',`${players.length} ud af 4 pladser optaget`);
-for(let i=0;i<4;i++)progress.append(el('span',undefined,i<players.length?'filled':''));
+progress.setAttribute(
+'aria-label',
+`${players.length} ud af 4 pladser optaget`
+);
+
+for(let i=0;i<4;i++){
+progress.append(el(
+'span',undefined,i<players.length?'filled':''
+));
+}
+
 card.append(progress);
+
 const remaining=Math.max(0,4-players.length);
-card.append(el('div',remaining===0?'Fuldt hold':remaining===1?'1 ledig plads':`${remaining} ledige pladser`,'game-availability'+(remaining===0?' full':'')));
-if(game.notes)card.append(el('div',game.notes,'game-note'));
+
+card.append(el(
+'div',
+remaining===0?'Fuldt hold':
+remaining===1?'1 ledig plads':
+`${remaining} ledige pladser`,
+'game-availability'+(remaining===0?' full':'')
+));
+
+if(game.notes){
+card.append(el('div',game.notes,'game-note'));
+}
 
 const playerBox=el('div',undefined,'players');
-playerBox.append(el('div','Tilmeldte spillere','players-title'));
+playerBox.append(el(
+'div','Tilmeldte spillere','players-title'
+));
+
 if(!players.length){
-playerBox.append(el('div','Ingen tilmeldte endnu.','small muted'));
+playerBox.append(el(
+'div','Ingen tilmeldte endnu.','small muted'
+));
 }else{
-players.forEach(player=>{
+for(const player of players){
 let name=names.get(player.user_id);
-if(!name&&player.user_id===userId)name=$('displayName').value.trim();
-name=name||'Navn ikke angivet';
-const mine=player.user_id===userId?' (dig)':'';
-const initials=name==='Navn ikke angivet'?'?':name.split(/\s+/).slice(0,2).map(part=>part[0]?.toUpperCase()||'').join('');
-const playerRow=el('div',undefined,'player');
-playerRow.append(el('span',initials,'player-avatar'),el('span',name+mine));
-playerBox.append(playerRow);
-});
+
+if(!name&&player.user_id===userId){
+name=$('displayName').value.trim();
 }
+
+name=name||'Navn ikke angivet';
+
+const mine=player.user_id===userId?' (dig)':'';
+
+const initials=name==='Navn ikke angivet'?'?':
+name.split(/\s+/).slice(0,2).map(
+part=>part[0]?.toUpperCase()||''
+).join('');
+
+const playerRow=el('div',undefined,'player');
+playerRow.append(
+el('span',initials,'player-avatar'),
+el('span',name+mine)
+);
+playerBox.append(playerRow);
+}
+}
+
 card.append(playerBox);
 
 const actions=el('div',undefined,'actions');
-const joinBtn=el('button',joined?'Afmeld mig':full?'Fuldt hold – 4/4':'Tilmeld mig');
+
+const joinBtn=el(
+'button',
+joined?'Afmeld mig':
+full?'Fuldt hold – 4/4':'Tilmeld mig'
+);
+
 if(joined)joinBtn.className='secondary';
 joinBtn.disabled=!joined&&full;
-joinBtn.onclick=async()=>{
-if(!currentUser||currentUser.id!==userId)return;
-joinBtn.disabled=true;
-try{
-let result;
-if(joined){
-result=await supabase.from('game_participants').delete()
-.eq('game_id',game.id).eq('user_id',userId);
-}else{
-result=await supabase.from('game_participants').insert({
-game_id:game.id,user_id:userId
-});
-}
-if(result.error)throw result.error;
-message(joined?'Du er afmeldt.':'Du er tilmeldt!');
-}catch(e){message('Tilmelding fejlede: '+errorText(e),true)}
-await loadGames();
-};
+
+joinBtn.onclick=()=>changeParticipation(
+game.id,joined,joinBtn
+);
+
 actions.append(joinBtn);
 
+/* SLET EGEN KAMP */
 if(game.created_by===userId){
-const deleteBtn=el('button','Slet kamp','danger');
+const deleteBtn=el(
+'button','Slet kamp','danger'
+);
+
 deleteBtn.onclick=async()=>{
-if(!confirm('Vil du slette denne kamp og alle tilmeldinger?'))return;
+if(!confirm(
+'Vil du slette denne kamp og alle tilmeldinger?'
+))return;
+
 deleteBtn.disabled=true;
+
 try{
-const {data,error}=await supabase.rpc('delete_own_game',{p_game_id:game.id});
+const {data,error}=await supabase.rpc(
+'delete_own_game',
+{p_game_id:game.id}
+);
+
 if(error)throw error;
-if(data!==true)throw new Error('Databasen bekræftede ikke sletningen.');
+if(data!==true){
+throw new Error(
+'Databasen bekræftede ikke sletningen.'
+);
+}
+
 message('Kampen er slettet.');
 await loadGames();
+
 }catch(e){
-message('Kunne ikke slette kampen: '+errorText(e),true);
+message(
+'Kunne ikke slette kampen: '+errorText(e),
+true
+);
 deleteBtn.disabled=false;
 }
 };
+
 actions.append(deleteBtn);
 }
+
 card.append(actions);
 root.append(card);
 }
 }
 
-// START APPEN
+/* START APPEN */
 supabase.auth.onAuthStateChange(event=>{
-if(['SIGNED_IN','SIGNED_OUT','USER_UPDATED'].includes(event)){
-setTimeout(()=>refreshSession().catch(console.error),0);
+if([
+'SIGNED_IN',
+'SIGNED_OUT',
+'USER_UPDATED'
+].includes(event)){
+setTimeout(()=>{
+refreshSession().catch(console.error);
+},0);
 }
 });
-try{await refreshSession()}
-catch(e){message('Appen kunne ikke starte: '+errorText(e),true)}
+
+try{
+await refreshSession();
+}catch(e){
+message(
+'Appen kunne ikke starte: '+errorText(e),
+true
+);
+}
 </script>
 </body>
 </html>
