@@ -81,6 +81,19 @@ button:disabled {
 }
 .small {font-size:14px}
 #notice {white-space:pre-wrap}
+.players {
+  margin:12px 0;
+  padding:12px;
+  background:#f2f7f4;
+  border-radius:9px;
+}
+.players-title {
+  font-weight:600;
+  margin-bottom:7px;
+}
+.player {
+  padding:4px 0;
+}
 </style>
 </head>
 <body>
@@ -128,6 +141,21 @@ button:disabled {
         Log ud
       </button>
     </div>
+
+    <section class="card">
+      <h2>Min spillerprofil</h2>
+      <p class="small muted">
+        Skriv det navn, som kollegaerne skal se
+        under de kampe, du tilmelder dig.
+      </p>
+      <label for="displayName">Dit spillernavn</label>
+      <input id="displayName"
+        maxlength="80"
+        autocomplete="name"
+        placeholder="Fx Peter Jensen">
+      <button id="saveName">Gem navn</button>
+      <p id="profileStatus" class="small muted"></p>
+    </section>
 
     <section class="card">
       <h2>Opret kamp</h2>
@@ -179,6 +207,7 @@ const supabase=createClient(
 
 const $=id=>document.getElementById(id);
 let currentUser=null;
+let profileLoadedFor=null;
 
 function message(text,bad=false){
   $('notice').textContent=text;
@@ -196,14 +225,85 @@ function el(tag,text,className){
   return node;
 }
 
+async function loadProfile(){
+  if(!currentUser)return;
+
+  const userId=currentUser.id;
+  const {data,error}=await supabase
+    .from('profiles')
+    .select('display_name')
+    .eq('id',userId)
+    .maybeSingle();
+
+  if(currentUser?.id!==userId)return;
+
+  if(error){
+    $('profileStatus').textContent=
+      'Kunne ikke hente spillernavn: '+errText(error);
+    $('profileStatus').className='small error';
+    return;
+  }
+
+  $('displayName').value=data?.display_name||'';
+  $('profileStatus').textContent=data?.display_name
+    ?'Dit spillernavn er gemt.'
+    :'Gem dit navn, så kollegaerne kan se det ved tilmelding.';
+  $('profileStatus').className='small muted';
+}
+
+$('saveName').onclick=async()=>{
+  if(!currentUser)return;
+
+  const name=$('displayName').value.trim();
+  if(!name||name.length>80){
+    message('Skriv et spillernavn på højst 80 tegn.',true);
+    return;
+  }
+
+  const button=$('saveName');
+  button.disabled=true;
+
+  try{
+    const {error}=await supabase
+      .from('profiles')
+      .upsert({
+        id:currentUser.id,
+        display_name:name
+      },{onConflict:'id'});
+
+    if(error)throw error;
+
+    $('profileStatus').textContent='Dit navn er gemt!';
+    $('profileStatus').className='small success';
+    message('Dit spillernavn er gemt!');
+    await loadGames();
+  }catch(error){
+    message('Kunne ikke gemme navn: '+errText(error),true);
+  }finally{
+    button.disabled=false;
+  }
+};
+
 async function refreshSession(){
   const {data,error}=await supabase.auth.getUser();
-  currentUser=error?null:data.user;
+  const user=error?null:data.user;
+  const changed=user?.id!==currentUser?.id;
+  currentUser=user;
+
   $('auth').classList.toggle('hidden',!!currentUser);
   $('app').classList.toggle('hidden',!currentUser);
+
   if(currentUser){
     $('who').textContent=currentUser.email||'Kollega';
+    if(changed||profileLoadedFor!==currentUser.id){
+      profileLoadedFor=currentUser.id;
+      await loadProfile();
+    }
     await loadGames();
+  }else{
+    profileLoadedFor=null;
+    $('displayName').value='';
+    $('profileStatus').textContent='';
   }
 }
 
@@ -349,6 +449,8 @@ $('create').onclick=async()=>{
 $('refresh').onclick=loadGames;
 
 async function loadGames(){
+  if(!currentUser)return;
+  const userId=currentUser.id;
   const root=$('games');
   root.replaceChildren(
     el('p','Indlæser kampe…','muted')
@@ -361,6 +463,8 @@ async function loadGames(){
     )
     .gte('starts_at',new Date().toISOString())
     .order('starts_at',{ascending:true});
+
+  if(currentUser?.id!==userId)return;
 
   if(error){
     root.replaceChildren(
@@ -385,6 +489,8 @@ async function loadGames(){
     .select('game_id,user_id')
     .in('game_id',games.map(g=>g.id));
 
+  if(currentUser?.id!==userId)return;
+
   if(pError){
     root.replaceChildren(
       el(
@@ -396,7 +502,39 @@ async function loadGames(){
     return;
   }
 
+  const playerIds=[
+    ...new Set((participants||[]).map(p=>p.user_id))
+  ];
+
+  let names=new Map();
+  let namesError=null;
+
+  if(playerIds.length){
+    const {data:profiles,error:profileError}=await supabase
+      .from('profiles')
+      .select('id,display_name')
+      .in('id',playerIds);
+
+    if(currentUser?.id!==userId)return;
+
+    if(profileError){
+      namesError=profileError;
+    }else{
+      names=new Map(
+        (profiles||[]).map(p=>[p.id,p.display_name])
+      );
+    }
+  }
+
   root.replaceChildren();
+
+  if(namesError){
+    root.append(el(
+      'p',
+      'Spillernavne kunne ikke hentes: '+errText(namesError),
+      'error small'
+    ));
+  }
 
   for(const game of games){
     const players=(participants||[])
@@ -434,6 +572,25 @@ async function loadGames(){
     if(game.notes){
       card.append(el('p',game.notes,'small'));
     }
+
+    const playerBox=el('div',undefined,'players');
+    playerBox.append(el('div','Tilmeldte spillere','players-title'));
+
+    if(!players.length){
+      playerBox.append(el('div','Ingen tilmeldte endnu.','muted small'));
+    }else{
+      players.forEach((player,index)=>{
+        const name=names.get(player.user_id)
+          ||'Navn ikke angivet';
+        const mine=player.user_id===currentUser.id
+          ?' (dig)':'';
+        playerBox.append(
+          el('div',`${index+1}. ${name}${mine}`,'player')
+        );
+      });
+    }
+
+    card.append(playerBox);
 
     const btn=el(
       'button',
@@ -532,34 +689,6 @@ if(hash.get('type')==='recovery'){
 }
 
 await refreshSession();
-
-async function sendGameMessage(gameId,messageText){
-  const text=messageText.trim();
-  if(!text)return;
-
-  const {data:{user},error:authError}=
-    await supabase.auth.getUser();
-
-  if(authError||!user){
-    message('Du skal være logget ind.',true);
-    return;
-  }
-
-  const {error}=await supabase
-    .from('game_messages')
-    .insert({
-      game_id:gameId,
-      user_id:user.id,
-      message:text
-    });
-
-  if(error){
-    message('Chatfejl: '+error.message,true);
-    return;
-  }
-
-  message('Besked sendt!');
-}
 </script>
 </body>
 </html>
