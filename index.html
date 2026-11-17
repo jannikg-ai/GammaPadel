@@ -144,9 +144,22 @@ box-shadow:0 0 0 5px #d6f1e3
 <button id="login" type="submit">Log ind</button>
 <button id="reset" type="button" class="secondary">Glemt adgangskode?</button>
 </form>
-<p class="small muted">Har du ikke en bruger endnu? Kontakt administratoren.</p>
+<button id="showRegister" type="button" class="secondary">➕ Opret ny profil</button>
+<p class="small muted">Nye profiler skal godkendes af administratoren.</p>
+<div id="registrationPanel" class="hidden">
+<hr><h3>Opret profil</h3>
+<form id="registrationForm">
+<label for="registerName">Fulde navn</label><input id="registerName" maxlength="80" autocomplete="name" required>
+<label for="registerEmail">E-mail</label><input id="registerEmail" type="email" autocomplete="email" required>
+<label for="registerSkill">Spilleniveau</label><select id="registerSkill"><option value="">Ikke valgt</option><option>Begynder</option><option>Let øvet</option><option>Øvet</option><option>Meget øvet</option></select>
+<label for="registerPassword">Adgangskode (mindst 8 tegn)</label><input id="registerPassword" type="password" minlength="8" autocomplete="new-password" required>
+<label for="registerConfirm">Gentag adgangskode</label><input id="registerConfirm" type="password" minlength="8" autocomplete="new-password" required>
+<button id="registerSubmit" type="submit">Send anmodning</button>
+</form><p id="registrationStatus" class="status small" role="status"></p>
+</div>
 </section>
 
+<section id="pendingPanel" class="card hidden"><h2>⏳ Afventer godkendelse</h2><p>Din profil er oprettet, men administratoren skal godkende den, før du kan bruge KollegaPadel.</p><button id="pendingRefresh" type="button">Kontrollér godkendelse</button> <button id="pendingLogout" class="secondary" type="button">Log ud</button></section>
 <div id="app" class="hidden">
 
 <section class="card row">
@@ -303,6 +316,14 @@ Skift adgangskode
 </section>
 </div>
 
+<!-- ADMINISTRATOR -->
+<section id="adminPanel" class="card hidden" style="max-width:800px;margin:16px auto">
+<h2>🛡️ Administrator – nye profiler</h2>
+<p class="muted small">Godkend eller afvis kollegaernes anmodninger om adgang.</p>
+<div id="adminRequests"></div>
+<button id="adminRefresh" type="button" class="secondary">Opdatér anmodninger</button>
+</section>
+
 <script type="module">
 import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
@@ -317,6 +338,8 @@ let profileName='';
 let gamesRequest=0;
 let profileRequest=0;
 let lastProfileFocus=null;
+let isApproved=false;
+let isAdmin=false;
 
 function el(tag,text,cls){
 const node=document.createElement(tag);
@@ -364,7 +387,9 @@ const previousId=currentUser?.id;
 currentUser=user;
 
 $('auth').classList.toggle('hidden',!!user);
-$('app').classList.toggle('hidden',!user);
+$('app').classList.add('hidden');
+$('pendingPanel').classList.add('hidden');
+$('adminPanel').classList.add('hidden');
 
 if(!user){
 ++profileRequest;
@@ -381,8 +406,57 @@ return;
 $('who').textContent=user.email||'Kollega';
 $('profileEmail').value=user.email||'';
 
+// Approval must be checked server-side too via database RLS.
+const {data:membership,error:membershipError}=await supabase.from('profiles')
+.select('approved,is_admin').eq('id',user.id).maybeSingle();
+if(membershipError){message('Kunne ikke kontrollere godkendelse: '+errorText(membershipError),true);return;}
+isApproved=membership?.approved===true;
+isAdmin=membership?.is_admin===true;
+$('pendingPanel').classList.toggle('hidden',isApproved);
+$('app').classList.toggle('hidden',!isApproved);
+if(!isApproved)return;
+$('adminPanel').classList.toggle('hidden',!isAdmin);
 if(previousId!==user.id)await loadProfile();
 await loadGames();
+if(isAdmin)await loadPendingRequests();
+}
+
+$('showRegister').onclick=()=>{$('registrationPanel').classList.toggle('hidden');};
+$('registrationForm').addEventListener('submit',async e=>{
+e.preventDefault();
+const name=$('registerName').value.trim();
+const email=$('registerEmail').value.trim();
+const password=$('registerPassword').value;
+if(!name||password.length<8||password!==$('registerConfirm').value){status('registrationStatus','Kontrollér navn og adgangskoder.',true);return;}
+const button=$('registerSubmit');button.disabled=true;
+try{
+const {data,error}=await supabase.auth.signUp({email,password,options:{data:{display_name:name,skill_level:$('registerSkill').value}}});
+if(error)throw error;
+status('registrationStatus','Anmodningen er sendt. Bekræft din e-mail, hvis du får en bekræftelsesmail. Du får adgang efter administratorgodkendelse.');
+$('registrationForm').reset();
+if(data.session)await refreshSession();
+}catch(err){status('registrationStatus','Kunne ikke oprette profil: '+errorText(err),true);}finally{button.disabled=false;}
+});
+$('pendingRefresh').onclick=refreshSession;
+$('pendingLogout').onclick=async()=>{await supabase.auth.signOut();await refreshSession();};
+$('adminRefresh').onclick=loadPendingRequests;
+async function loadPendingRequests(){
+if(!isAdmin||!currentUser)return;
+const root=$('adminRequests');root.replaceChildren(el('p','Henter anmodninger…','muted'));
+const {data,error}=await supabase.from('profiles').select('id,display_name,approved').eq('approved',false).order('display_name');
+if(error){root.replaceChildren(el('p',errorText(error),'error'));return;}
+root.replaceChildren();
+if(!data?.length){root.append(el('p','Ingen afventende anmodninger.','muted'));return;}
+for(const person of data){
+const line=el('div',undefined,'row');line.style.padding='10px 0';
+const name=el('strong',person.display_name||'Ny kollega');
+const approve=el('button','Godkend');approve.type='button';
+approve.onclick=async()=>{approve.disabled=true;
+const {error}=await supabase.rpc('padel_approve_user',{p_user_id:person.id});
+if(error){message('Godkendelse mislykkedes: '+errorText(error),true);approve.disabled=false;return;}
+message('Profil godkendt.');await loadPendingRequests();};
+line.append(name,approve);root.append(line);
+}
 }
 
 $('loginForm').addEventListener('submit',async e=>{
@@ -1429,3 +1503,6 @@ message('Appen kunne ikke starte: '+errorText(err),true);
 </script>
 </body>
 </html>
+
+
+
