@@ -130,8 +130,11 @@ button:disabled {
 
     <section class="card">
       <h2>Opret kamp</h2>
-      <label for="date">Dato og tidspunkt</label>
+      <label for="date">Kampstart – dato og tidspunkt</label>
       <input id="date" type="datetime-local" required>
+
+      <label for="endDate">Sluttidspunkt – dato og tidspunkt</label>
+      <input id="endDate" type="datetime-local" required>
 
       <label for="venue">Spillested</label>
       <input id="venue" value="Skinderskovhallen"
@@ -200,7 +203,6 @@ async function refreshSession(){
 }
 
 $('login').onclick=async()=>{
-  alert('Loginknappen virker!');
   const email=$('email').value.trim();
   const password=$('password').value;
 
@@ -209,7 +211,7 @@ $('login').onclick=async()=>{
     return;
   }
 
-const {error}=await supabase.auth.signInWithPassword({
+  const {error}=await supabase.auth.signInWithPassword({
     email,password
   });
 
@@ -250,23 +252,30 @@ $('create').onclick=async()=>{
   if(!currentUser)return;
 
   const date=$('date').value;
+  const endDate=$('endDate').value;
   const venue=$('venue').value.trim();
   const note=$('note').value.trim();
 
-  if(!date||!venue){
-    message('Vælg dato og spillested.',true);
+  if(!date||!endDate||!venue){
+    message('Vælg kampstart, sluttidspunkt og spillested.',true);
     return;
   }
 
   const when=new Date(date);
+  const endsAt=new Date(endDate);
   if(Number.isNaN(when.getTime())||when<=new Date()){
-    message('Vælg et tidspunkt i fremtiden.',true);
+    message('Vælg et starttidspunkt i fremtiden.',true);
+    return;
+  }
+  if(Number.isNaN(endsAt.getTime())||endsAt<=when){
+    message('Sluttidspunktet skal være efter kampstart.',true);
     return;
   }
 
   const {error}=await supabase.from('games').insert({
     created_by:currentUser.id,
     starts_at:when.toISOString(),
+    ends_at:endsAt.toISOString(),
     location:venue,
     notes:note||null
   });
@@ -290,7 +299,7 @@ async function loadGames(){
 
   const {data:games,error}=await supabase
     .from('games')
-    .select('id,starts_at,location,notes,created_by')
+    .select('id,starts_at,ends_at,location,notes,created_by')
     .gte('starts_at',new Date().toISOString())
     .order('starts_at',{ascending:true});
 
@@ -340,8 +349,14 @@ async function loadGames(){
       }
     );
 
+    const endTime=game.ends_at
+      ?new Date(game.ends_at).toLocaleTimeString(
+          'da-DK',{hour:'2-digit',minute:'2-digit'}
+        )
+      :null;
+
     card.append(
-      el('strong',dt),
+      el('strong',endTime?`${dt} – ${endTime}`:dt),
       el('div',game.location),
       el('div',`${players.length}/4 spillere`,'muted')
     );
