@@ -206,6 +206,7 @@ const supabase=createClient(
 const $=id=>document.getElementById(id);
 let currentUser=null;
 let profileLoadedFor=null;
+let profileRequest=0;
 
 function message(text,bad=false){
   $('notice').textContent=text;
@@ -221,8 +222,11 @@ function profileErrorText(error){
   if(error?.code==='42501'||/row.level security|permission denied|policy/i.test(raw)){
     return 'Supabase afviser adgang til spillerprofiler. Kør SQL-rettelsen i Supabase SQL Editor, og prøv igen. ('+raw+')';
   }
-  if(error?.code==='42P01'){
+  if(error?.code==='PGRST205'||error?.code==='42P01'){
     return 'Tabellen profiles mangler i Supabase. Kør SQL-rettelsen i Supabase SQL Editor.';
+  }
+  if(error?.code==='42703'){
+    return 'Kolonnen display_name mangler i profiles. Kør SQL-rettelsen.';
   }
   return raw;
 }
@@ -238,13 +242,15 @@ async function loadProfile(){
   if(!currentUser)return;
 
   const userId=currentUser.id;
+  const request=++profileRequest;
+  $('profileStatus').textContent='Henter spillerprofil…';
   const {data,error}=await supabase
     .from('profiles')
     .select('display_name')
     .eq('id',userId)
     .maybeSingle();
 
-  if(currentUser?.id!==userId)return;
+  if(currentUser?.id!==userId||request!==profileRequest)return;
 
   if(error){
     $('profileStatus').textContent=
@@ -270,13 +276,14 @@ $('saveName').onclick=async()=>{
   }
 
   const button=$('saveName');
+  const userId=currentUser.id;
   button.disabled=true;
 
   try{
     const {error}=await supabase
       .from('profiles')
       .upsert({
-        id:currentUser.id,
+        id:userId,
         display_name:name
       },{onConflict:'id'});
 
@@ -289,15 +296,18 @@ $('saveName').onclick=async()=>{
       .single();
 
     if(readError)throw readError;
+    if(currentUser?.id!==userId)return;
     if(saved?.display_name!==name){
       throw new Error('Navnet kunne ikke bekræftes i databasen.');
     }
 
+    $('displayName').value=name;
     $('profileStatus').textContent='Dit navn er gemt!';
     $('profileStatus').className='small success';
     message('Dit spillernavn er gemt!');
     await loadGames();
   }catch(error){
+    if(currentUser?.id!==userId)return;
     $('profileStatus').textContent=
       'Kunne ikke gemme navn: '+profileErrorText(error);
     $('profileStatus').className='small error';
@@ -324,6 +334,7 @@ async function refreshSession(){
     }
     await loadGames();
   }else{
+    ++profileRequest;
     profileLoadedFor=null;
     $('displayName').value='';
     $('profileStatus').textContent='';
