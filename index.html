@@ -24,6 +24,7 @@ button.secondary{background:#e4eee9;color:#194738}
 button.danger{background:#b42332}
 button.wait-button{background:#dbeafe;color:#1e4f87}
 button:disabled{opacity:.5;cursor:not-allowed}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #7dc9aa;outline-offset:2px}
 .muted{color:#65766e}
 .error{color:#a32828}
 .success{color:#14704b}
@@ -84,7 +85,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .game .actions button{flex:1;min-width:125px}
 .game .actions button.danger{flex:0 1 auto}
 
-/* SEPARAT PROFILVINDUE */
+/* PROFILVINDUE */
 .modal{position:fixed;inset:0;z-index:20;background:#10251dbb;display:flex;align-items:center;justify-content:center;padding:15px}
 .modal-panel{width:min(100%,540px);max-height:92vh;overflow-y:auto;background:white;border-radius:19px;padding:23px;box-shadow:0 15px 50px #0004}
 .modal-header{display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -100,6 +101,15 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .modal hr{border:0;border-top:1px solid #e2eee6;margin:20px 0}
 .password-hint{font-size:13px;color:#65766e}
 .profile-save{width:100%}
+
+/* NYT: KALENDER */
+.calendar-button{background:#e2f1e9!important;color:#125a41!important;font-weight:700}
+.calendar-box{background:#f1f8f4;border:1px solid #d5e9dc;border-radius:12px;padding:14px;margin-top:12px}
+.calendar-box label{margin:0 0 8px}
+.calendar-box select{margin-bottom:10px}
+.calendar-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.calendar-options button{margin:0;padding:12px 5px;font-size:13px}
+.calendar-help{font-size:12px;color:#65766e;margin:10px 0 0}
 @media(max-width:420px){
 .time-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .card{padding:16px}
@@ -107,6 +117,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .game-date{font-size:17px}
 .game-count{min-width:72px}
 .modal-panel{padding:17px}
+.calendar-options{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -214,7 +225,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 </div>
 </main>
 
-<!-- SEPARAT PROFILVINDUE -->
+<!-- PROFILVINDUE -->
 <div id="profileModal" class="modal hidden"
 role="dialog" aria-modal="true" aria-labelledby="profileTitle">
 <section class="modal-panel">
@@ -266,26 +277,19 @@ Gem profiloplysninger
 <hr>
 
 <h3>🔐 Skift adgangskode</h3>
-<p class="password-hint">
-Vælg en ny adgangskode på mindst 8 tegn.
-</p>
+<p class="password-hint">Vælg en ny adgangskode på mindst 8 tegn.</p>
 <label for="newPassword">Ny adgangskode</label>
-<input id="newPassword" type="password"
-autocomplete="new-password" minlength="8">
+<input id="newPassword" type="password" autocomplete="new-password" minlength="8">
 <label for="confirmPassword">Gentag ny adgangskode</label>
-<input id="confirmPassword" type="password"
-autocomplete="new-password" minlength="8">
-<button id="changePassword" class="secondary">
-Skift adgangskode
-</button>
+<input id="confirmPassword" type="password" autocomplete="new-password" minlength="8">
+<button id="changePassword" class="secondary">Skift adgangskode</button>
 <p id="passwordStatus" class="small status"></p>
 
 </section>
 </div>
 
 <script type="module">
-import {createClient} from
-'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
 const supabase=createClient(
 'https://zxmztnkwgdfxndiqtaqm.supabase.co',
@@ -361,9 +365,7 @@ return;
 $('who').textContent=user.email||'Kollega';
 $('profileEmail').value=user.email||'';
 
-if(previousId!==user.id){
-await loadProfile();
-}
+if(previousId!==user.id)await loadProfile();
 await loadGames();
 }
 
@@ -377,9 +379,7 @@ return;
 const button=$('login');
 button.disabled=true;
 try{
-const {error}=await supabase.auth.signInWithPassword({
-email,password
-});
+const {error}=await supabase.auth.signInWithPassword({email,password});
 if(error)throw error;
 message('Du er logget ind!');
 await refreshSession();
@@ -503,9 +503,7 @@ button.disabled=true;
 
 try{
 const {error}=await supabase.from('profiles').upsert({
-id:userId,
-display_name:name,
-skill_level:level||null
+id:userId,display_name:name,skill_level:level||null
 },{onConflict:'id'});
 
 if(error)throw error;
@@ -517,7 +515,6 @@ await supabase.from('profiles')
 .single();
 
 if(readError)throw readError;
-
 if(saved?.display_name!==name||
 (saved?.skill_level||'')!==level){
 throw new Error('Profiloplysningerne kunne ikke bekræftes.');
@@ -537,7 +534,6 @@ updateProfileHeading();
 status('profileStatus','✓ Profilen er gemt!');
 message('Dine profiloplysninger er opdateret!');
 await loadGames();
-
 }catch(e){
 status('profileStatus',
 'Kunne ikke gemme profil: '+errorText(e),true);
@@ -549,7 +545,6 @@ button.disabled=false;
 /* SKIFT ADGANGSKODE */
 $('changePassword').onclick=async()=>{
 if(!currentUser)return;
-
 const password=$('newPassword').value;
 const confirmation=$('confirmPassword').value;
 
@@ -558,7 +553,6 @@ status('passwordStatus',
 'Adgangskoden skal være mindst 8 tegn.',true);
 return;
 }
-
 if(password!==confirmation){
 status('passwordStatus',
 'Adgangskoderne er ikke ens.',true);
@@ -569,11 +563,8 @@ const button=$('changePassword');
 button.disabled=true;
 
 try{
-const {error}=await supabase.auth.updateUser({
-password
-});
+const {error}=await supabase.auth.updateUser({password});
 if(error)throw error;
-
 $('newPassword').value='';
 $('confirmPassword').value='';
 status('passwordStatus','✓ Adgangskoden er opdateret!');
@@ -589,22 +580,18 @@ button.disabled=false;
 async function loadPlayedCount(){
 if(!currentUser)return;
 const userId=currentUser.id;
-
 $('playedCount').textContent='…';
 
 const {data,error}=await supabase.from('game_participants')
-.select('game_id')
-.eq('user_id',userId);
+.select('game_id').eq('user_id',userId);
 
 if(currentUser?.id!==userId)return;
-
 if(error){
 $('playedCount').textContent='–';
 return;
 }
 
 const ids=[...new Set((data||[]).map(p=>p.game_id))];
-
 if(!ids.length){
 $('playedCount').textContent='0';
 return;
@@ -616,8 +603,7 @@ const {count,error:countError}=await supabase.from('games')
 .lt('ends_at',new Date().toISOString());
 
 if(currentUser?.id!==userId)return;
-$('playedCount').textContent=
-countError?'–':String(count??0);
+$('playedCount').textContent=countError?'–':String(count??0);
 }
 
 /* BOOKING */
@@ -692,7 +678,6 @@ updateBookingSummary();
 /* OPRET KAMP */
 $('create').onclick=async()=>{
 if(!currentUser)return;
-
 const date=$('date').value;
 const start=$('startTime').value;
 const end=$('endTime').value;
@@ -712,7 +697,6 @@ startsAt<=new Date()){
 message('Kampstart skal ligge i fremtiden.',true);
 return;
 }
-
 if(Number.isNaN(endsAt.getTime())||
 endsAt<=startsAt){
 message('Sluttidspunkt skal være efter kampstart.',true);
@@ -727,15 +711,12 @@ const {error}=await supabase.from('games').insert({
 created_by:currentUser.id,
 starts_at:startsAt.toISOString(),
 ends_at:endsAt.toISOString(),
-location:venue,
-notes:note||null
+location:venue,notes:note||null
 });
-
 if(error)throw error;
 $('note').value='';
 message('Kampen er oprettet!');
 await loadGames();
-
 }catch(e){
 message('Kunne ikke oprette kamp: '+errorText(e),true);
 }finally{
@@ -746,7 +727,6 @@ button.disabled=false;
 /* TILMELDING OG VENTELISTE */
 async function gameAction(gameId,action,button){
 if(!currentUser)return;
-
 const userId=currentUser.id;
 button.disabled=true;
 
@@ -763,15 +743,11 @@ not_joined:'Du var ikke tilmeldt.'
 try{
 const {data,error}=await supabase.rpc(
 'padel_game_action',{
-p_game_id:gameId,
-p_action:action
+p_game_id:gameId,p_action:action
 });
-
 if(error)throw error;
 if(currentUser?.id!==userId)return;
-
 message(messages[data]||'Handlingen er gennemført.');
-
 }catch(e){
 if(currentUser?.id===userId){
 message('Kunne ikke gennemføre handlingen: '+errorText(e),true);
@@ -788,6 +764,207 @@ button.onclick=()=>gameAction(gameId,action,button);
 return button;
 }
 
+/* NYT: KALENDERFUNKTION */
+function calendarDates(game){
+const start=new Date(game.starts_at);
+const end=new Date(game.ends_at);
+if(!Number.isFinite(start.getTime())||
+!Number.isFinite(end.getTime())||
+end<=start){
+throw new Error('Kampen har ugyldige kalenderdatoer.');
+}
+return {start,end};
+}
+
+function utcCalendarDate(date){
+return date.toISOString()
+.replace(/[-:]/g,'')
+.replace(/\.\d{3}Z$/,'Z');
+}
+
+function calendarDescription(game){
+return [
+'KollegaPadel – padelkamp',
+game.notes||'',
+'Kampen er oprettet via KollegaPadel.',
+'Bemærk: Banen bookes separat.'
+].filter(Boolean).join('\n');
+}
+
+function icsEscape(text){
+return String(text||'')
+.replace(/\\/g,'\\\\')
+.replace(/\r\n|\r|\n/g,'\\n')
+.replace(/,/g,'\\,')
+.replace(/;/g,'\\;');
+}
+
+function foldIcsLine(line){
+const bytes=new TextEncoder();
+const chunks=[];
+let current='';
+for(const char of line){
+if(bytes.encode(current+char).length>73){
+chunks.push(current);
+current=' '+char;
+}else{
+current+=char;
+}
+}
+chunks.push(current);
+return chunks.join('\r\n');
+}
+
+function downloadCalendar(game,reminder){
+const {start,end}=calendarDates(game);
+const lines=[
+'BEGIN:VCALENDAR',
+'VERSION:2.0',
+'PRODID:-//KollegaPadel//DA',
+'CALSCALE:GREGORIAN',
+'METHOD:PUBLISH',
+'BEGIN:VEVENT',
+'UID:'+String(game.id)+'@kollegapadel',
+'DTSTAMP:'+utcCalendarDate(new Date()),
+'DTSTART:'+utcCalendarDate(start),
+'DTEND:'+utcCalendarDate(end),
+'SUMMARY:'+icsEscape('🎾 KollegaPadel'),
+'LOCATION:'+icsEscape(game.location||''),
+'DESCRIPTION:'+icsEscape(calendarDescription(game))
+];
+
+if(reminder>0){
+lines.push(
+'BEGIN:VALARM',
+'ACTION:DISPLAY',
+'DESCRIPTION:Padelkamp starter snart',
+'TRIGGER:-PT'+reminder+'M',
+'END:VALARM'
+);
+}
+
+lines.push('END:VEVENT','END:VCALENDAR');
+
+const content=lines.map(foldIcsLine).join('\r\n')+'\r\n';
+const blob=new Blob([content],{
+type:'text/calendar;charset=utf-8'
+});
+const url=URL.createObjectURL(blob);
+const link=document.createElement('a');
+link.href=url;
+link.download='KollegaPadel-'+
+start.toISOString().slice(0,10)+'.ics';
+document.body.append(link);
+link.click();
+link.remove();
+setTimeout(()=>URL.revokeObjectURL(url),10000);
+}
+
+function googleCalendar(game){
+const {start,end}=calendarDates(game);
+const params=new URLSearchParams({
+action:'TEMPLATE',
+text:'🎾 KollegaPadel',
+dates:utcCalendarDate(start)+'/'+utcCalendarDate(end),
+details:calendarDescription(game),
+location:game.location||''
+});
+window.open(
+'https://calendar.google.com/calendar/render?'+params,
+'_blank','noopener,noreferrer'
+);
+}
+
+function outlookCalendar(game){
+const {start,end}=calendarDates(game);
+const params=new URLSearchParams({
+path:'/calendar/action/compose',
+rru:'addevent',
+subject:'🎾 KollegaPadel',
+startdt:start.toISOString(),
+enddt:end.toISOString(),
+body:calendarDescription(game),
+location:game.location||''
+});
+window.open(
+'https://outlook.live.com/calendar/0/deeplink/compose?'+params,
+'_blank','noopener,noreferrer'
+);
+}
+
+function calendarWidget(game){
+const container=el('div');
+const toggle=el('button','📅 Tilføj til kalender','calendar-button');
+toggle.type='button';
+
+const box=el('div',undefined,'calendar-box hidden');
+const label=el('label','Påmindelse før kampstart');
+const select=el('select');
+const selectId='reminder-'+String(game.id);
+select.id=selectId;
+label.htmlFor=selectId;
+
+[
+[0,'Ingen påmindelse'],
+[15,'15 minutter før'],
+[30,'30 minutter før'],
+[60,'1 time før']
+].forEach(([value,text])=>{
+const option=el('option',text);
+option.value=String(value);
+if(value===30)option.selected=true;
+select.append(option);
+});
+
+const options=el('div',undefined,'calendar-options');
+
+const apple=el('button','🍎 Apple / iPhone','secondary');
+const google=el('button','Google Kalender');
+const outlook=el('button','Outlook','secondary');
+
+apple.type='button';
+google.type='button';
+outlook.type='button';
+
+apple.onclick=()=>{
+try{
+downloadCalendar(game,Number(select.value));
+}catch(e){message(errorText(e),true)}
+};
+
+google.onclick=()=>{
+try{
+googleCalendar(game);
+}catch(e){message(errorText(e),true)}
+};
+
+outlook.onclick=()=>{
+try{
+outlookCalendar(game);
+}catch(e){message(errorText(e),true)}
+};
+
+options.append(apple,google,outlook);
+box.append(
+label,select,options,
+el('p',
+'Apple bruger en kalenderfil med den valgte påmindelse. I Google og Outlook kan du vælge påmindelse, når du gemmer begivenheden.',
+'calendar-help')
+);
+
+toggle.onclick=()=>{
+box.classList.toggle('hidden');
+toggle.setAttribute(
+'aria-expanded',
+String(!box.classList.contains('hidden'))
+);
+};
+
+toggle.setAttribute('aria-expanded','false');
+container.append(toggle,box);
+return container;
+}
+
 /* MINE KAMPE */
 function renderMyGames(games,participants,waitlist,userId){
 const root=$('myGames');
@@ -797,7 +974,6 @@ const joinedIds=new Set(
 participants.filter(p=>p.user_id===userId)
 .map(p=>String(p.game_id))
 );
-
 const waitingIds=new Set(
 waitlist.filter(p=>p.user_id===userId)
 .map(p=>String(p.game_id))
@@ -847,7 +1023,7 @@ p=>String(p.game_id)===String(game.id)
 card.append(
 el('span','✓ Du er tilmeldt','game-tag'),
 el('div',`👥 ${count}/4 spillere`,'my-game-meta'),
-el('div'),
+calendarWidget(game),
 actionButton('Afmeld mig',game.id,'leave','secondary')
 );
 }
@@ -859,7 +1035,6 @@ if(myGames.length){
 root.append(el('h3','Mine tilmeldte kampe'));
 myGames.forEach(g=>addCard(g,false));
 }
-
 if(myWaiting.length){
 root.append(el('h3','Mine ventelister'));
 myWaiting.forEach(g=>addCard(g,true));
@@ -871,7 +1046,6 @@ $('refresh').onclick=loadGames;
 
 async function loadGames(){
 if(!currentUser)return;
-
 const userId=currentUser.id;
 const request=++gamesRequest;
 const root=$('games');
@@ -887,7 +1061,6 @@ const {data:games,error}=await supabase.from('games')
 .order('starts_at',{ascending:true});
 
 if(outdated())return;
-
 if(error){
 root.replaceChildren(el('p',
 'Kunne ikke hente kampe: '+errorText(error),'error'));
@@ -909,9 +1082,7 @@ const ids=games.map(g=>g.id);
 
 const [pResult,wResult]=await Promise.all([
 supabase.from('game_participants')
-.select('game_id,user_id')
-.in('game_id',ids),
-
+.select('game_id,user_id').in('game_id',ids),
 supabase.from('game_waitlist')
 .select('id,game_id,user_id,created_at')
 .in('game_id',ids)
@@ -936,7 +1107,6 @@ const waitlist=wResult.data||[];
 
 renderMyGames(games,participants,waitlist,userId);
 
-/* SPILLERNAVNE */
 const playerIds=[...new Set([
 ...participants.map(p=>p.user_id),
 ...waitlist.map(p=>p.user_id)
@@ -952,7 +1122,6 @@ await supabase.from('profiles')
 .in('id',playerIds);
 
 if(outdated())return;
-
 if(profileErr){
 namesError=profileErr;
 }else{
@@ -1002,7 +1171,6 @@ el('div','📍 '+(game.location||'Ikke angivet'),'game-meta')
 if(joined){
 info.append(el('span','✓ Du er tilmeldt','game-tag'));
 }
-
 if(waiting){
 const position=queue.findIndex(
 w=>w.user_id===userId
@@ -1016,12 +1184,10 @@ count.append(
 el('strong',`${players.length}/4`),
 el('span','SPILLERE')
 );
-
 top.append(info,count);
 card.append(top);
 
 const progress=el('div',undefined,'game-progress');
-
 for(let i=0;i<4;i++){
 progress.append(el('span',undefined,
 i<players.length?'filled':''));
@@ -1040,7 +1206,6 @@ if(game.notes){
 card.append(el('div',game.notes,'game-note'));
 }
 
-/* TILMELDTE SPILLERE */
 const playerBox=el('div',undefined,'players');
 playerBox.append(el('div',
 'Tilmeldte spillere','players-title'));
@@ -1052,25 +1217,20 @@ playerBox.append(el('div',
 
 for(const player of players){
 const name=playerName(player.user_id);
-
 const initials=name==='Navn ikke angivet'?'?':
 name.split(/\s+/).slice(0,2)
 .map(part=>part[0]?.toUpperCase()||'').join('');
 
 const playerRow=el('div',undefined,'player');
-
 playerRow.append(
 el('span',initials,'player-avatar'),
 el('span',name+
 (player.user_id===userId?' (dig)':''))
 );
-
 playerBox.append(playerRow);
 }
-
 card.append(playerBox);
 
-/* VENTELISTE */
 if(queue.length){
 const waitBox=el('div',undefined,'waitlist');
 waitBox.append(el('h3',
@@ -1078,24 +1238,20 @@ waitBox.append(el('h3',
 
 queue.forEach((person,index)=>{
 const item=el('div',undefined,'wait-person');
-
 item.append(
 el('span',String(index+1),'wait-number'),
 el('span',playerName(person.user_id)+
 (person.user_id===userId?' (dig)':''))
 );
-
 waitBox.append(item);
 });
 
 waitBox.append(el('p',
 'Første spiller får automatisk plads ved afmelding.',
 'small muted'));
-
 card.append(waitBox);
 }
 
-/* KNAPPER */
 const actions=el('div',undefined,'actions');
 
 if(joined){
@@ -1113,7 +1269,6 @@ actions.append(actionButton(
 '🎾 Tilmeld mig',game.id,'join'));
 }
 
-/* SLET EGEN KAMP */
 if(game.created_by===userId){
 const deleteBtn=el('button','Slet kamp','danger');
 
@@ -1123,29 +1278,22 @@ if(!confirm(
 ))return;
 
 deleteBtn.disabled=true;
-
 try{
 const {data,error}=await supabase.rpc(
 'delete_own_game',{p_game_id:game.id}
 );
-
 if(error)throw error;
-
 if(data!==true){
-throw new Error(
-'Databasen bekræftede ikke sletningen.');
+throw new Error('Databasen bekræftede ikke sletningen.');
 }
-
 message('Kampen er slettet.');
 await loadGames();
-
 }catch(e){
 message('Kunne ikke slette kampen: '+
 errorText(e),true);
 deleteBtn.disabled=false;
 }
 };
-
 actions.append(deleteBtn);
 }
 
