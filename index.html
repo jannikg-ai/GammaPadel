@@ -1,10 +1,9 @@
-
 <!doctype html>
 <html lang="da">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GammaPadel</title>
+<title>GAMMAPADEL</title>
 <style>
 :root{font-family:system-ui,-apple-system,sans-serif;color:#17302b;background:#f2f7f4}
 *{box-sizing:border-box}
@@ -125,7 +124,7 @@ box-shadow:0 0 0 5px #d6f1e3
 
 <header>
 <div>
-<h1>🎾 KollegaPadel</h1>
+<h1>🎾 GAMMAPADEL</h1>
 <div>Padel for fællesskabet</div>
 </div>
 </header>
@@ -159,7 +158,7 @@ box-shadow:0 0 0 5px #d6f1e3
 </div>
 </section>
 
-<section id="pendingPanel" class="card hidden"><h2>⏳ Afventer godkendelse</h2><p>Din profil er oprettet, men administratoren skal godkende den, før du kan bruge KollegaPadel.</p><button id="pendingRefresh" type="button">Kontrollér godkendelse</button> <button id="pendingLogout" class="secondary" type="button">Log ud</button></section>
+<section id="pendingPanel" class="card hidden"><h2>⏳ Afventer godkendelse</h2><p>Din profil er oprettet, men administratoren skal godkende den, før du kan bruge GAMMAPADEL.</p><button id="pendingRefresh" type="button">Kontrollér godkendelse</button> <button id="pendingLogout" class="secondary" type="button">Log ud</button></section>
 <div id="app" class="hidden">
 
 <section class="card row">
@@ -256,7 +255,7 @@ role="dialog" aria-modal="true" aria-labelledby="profileTitle">
 <div class="profile-avatar" id="profileAvatar">?</div>
 <div class="profile-center">
 <strong id="profileHeading">Min spillerprofil</strong>
-<p class="small muted">KollegaPadel-medlem</p>
+<p class="small muted">GAMMAPADEL-medlem</p>
 </div>
 
 <div class="profile-stats">
@@ -324,8 +323,31 @@ Skift adgangskode
 <button id="adminRefresh" type="button" class="secondary">Opdatér anmodninger</button>
 </section>
 
+<script>
+// Stop almindelig formularindsendelse, selv hvis appens modul ikke indlæses.
+window.gammaLoginReady = false;
+window.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('loginForm');
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    if (!window.gammaLoginReady) {
+      const notice = document.getElementById('notice');
+      notice.textContent = 'Login er endnu ikke klar. Supabase-forbindelsen kunne ikke indlæses. Kontrollér internetforbindelsen og genindlæs siden.';
+      notice.className = 'error';
+    }
+  });
+});
+</script>
 <script type="module">
-import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+let createClient;
+try {
+  ({createClient} = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'));
+} catch (err) {
+  const notice = document.getElementById('notice');
+  notice.textContent = 'Kunne ikke indlæse Supabase. Kontrollér internetforbindelsen, og prøv at genindlæse siden. Teknisk fejl: ' + (err?.message || String(err));
+  notice.className = 'error';
+  throw err;
+}
 
 const supabase=createClient(
 'https://zxmztnkwgdfxndiqtaqm.supabase.co',
@@ -459,6 +481,7 @@ line.append(name,approve);root.append(line);
 }
 }
 
+window.gammaLoginReady = true;
 $('loginForm').addEventListener('submit',async e=>{
 e.preventDefault();
 const email=$('email').value.trim();
@@ -929,9 +952,9 @@ return date.toISOString()
 
 function calendarDescription(game){
 return [
-'KollegaPadel – padelkamp',
+'GAMMAPADEL – padelkamp',
 game.notes||'',
-'Kampen er oprettet via KollegaPadel.',
+'Kampen er oprettet via GAMMAPADEL.',
 'Bemærk: Banen bookes separat.'
 ].filter(Boolean).join('\n');
 }
@@ -967,15 +990,15 @@ const {start,end}=calendarDates(game);
 const lines=[
 'BEGIN:VCALENDAR',
 'VERSION:2.0',
-'PRODID:-//KollegaPadel//DA',
+'PRODID:-//GAMMAPADEL//DA',
 'CALSCALE:GREGORIAN',
 'METHOD:PUBLISH',
 'BEGIN:VEVENT',
-'UID:'+String(game.id)+'@kollegapadel',
+'UID:'+String(game.id)+'@gammapadel',
 'DTSTAMP:'+utcCalendarDate(new Date()),
 'DTSTART:'+utcCalendarDate(start),
 'DTEND:'+utcCalendarDate(end),
-'SUMMARY:'+icsEscape('🎾 KollegaPadel'),
+'SUMMARY:'+icsEscape('🎾 GAMMAPADEL'),
 'LOCATION:'+icsEscape(game.location||''),
 'DESCRIPTION:'+icsEscape(calendarDescription(game))
 ];
@@ -1000,7 +1023,7 @@ const url=URL.createObjectURL(blob);
 const link=document.createElement('a');
 
 link.href=url;
-link.download='KollegaPadel-'+
+link.download='GAMMAPADEL-'+
 start.toISOString().slice(0,10)+'.ics';
 
 document.body.append(link);
@@ -1013,7 +1036,7 @@ function googleCalendar(game){
 const {start,end}=calendarDates(game);
 const params=new URLSearchParams({
 action:'TEMPLATE',
-text:'🎾 KollegaPadel',
+text:'🎾 GAMMAPADEL',
 dates:utcCalendarDate(start)+'/'+utcCalendarDate(end),
 details:calendarDescription(game),
 location:game.location||''
@@ -1030,7 +1053,7 @@ const {start,end}=calendarDates(game);
 const params=new URLSearchParams({
 path:'/calendar/action/compose',
 rru:'addevent',
-subject:'🎾 KollegaPadel',
+subject:'🎾 GAMMAPADEL',
 startdt:start.toISOString(),
 enddt:end.toISOString(),
 body:calendarDescription(game),
