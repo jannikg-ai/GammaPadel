@@ -91,9 +91,7 @@ button:disabled {
   font-weight:600;
   margin-bottom:7px;
 }
-.player {
-  padding:4px 0;
-}
+.player {padding:4px 0}
 </style>
 </head>
 <body>
@@ -218,6 +216,17 @@ function errText(error){
   return error?.message||'Der opstod en fejl.';
 }
 
+function profileErrorText(error){
+  const raw=errText(error);
+  if(error?.code==='42501'||/row.level security|permission denied|policy/i.test(raw)){
+    return 'Supabase afviser adgang til spillerprofiler. Kør SQL-rettelsen i Supabase SQL Editor, og prøv igen. ('+raw+')';
+  }
+  if(error?.code==='42P01'){
+    return 'Tabellen profiles mangler i Supabase. Kør SQL-rettelsen i Supabase SQL Editor.';
+  }
+  return raw;
+}
+
 function el(tag,text,className){
   const node=document.createElement(tag);
   if(text!==undefined) node.textContent=text;
@@ -239,7 +248,7 @@ async function loadProfile(){
 
   if(error){
     $('profileStatus').textContent=
-      'Kunne ikke hente spillernavn: '+errText(error);
+      'Kunne ikke hente spillernavn: '+profileErrorText(error);
     $('profileStatus').className='small error';
     return;
   }
@@ -273,12 +282,26 @@ $('saveName').onclick=async()=>{
 
     if(error)throw error;
 
+    const {data:saved,error:readError}=await supabase
+      .from('profiles')
+      .select('display_name')
+      .eq('id',currentUser.id)
+      .single();
+
+    if(readError)throw readError;
+    if(saved?.display_name!==name){
+      throw new Error('Navnet kunne ikke bekræftes i databasen.');
+    }
+
     $('profileStatus').textContent='Dit navn er gemt!';
     $('profileStatus').className='small success';
     message('Dit spillernavn er gemt!');
     await loadGames();
   }catch(error){
-    message('Kunne ikke gemme navn: '+errText(error),true);
+    $('profileStatus').textContent=
+      'Kunne ikke gemme navn: '+profileErrorText(error);
+    $('profileStatus').className='small error';
+    message('Kunne ikke gemme navn: '+profileErrorText(error),true);
   }finally{
     button.disabled=false;
   }
@@ -531,7 +554,7 @@ async function loadGames(){
   if(namesError){
     root.append(el(
       'p',
-      'Spillernavne kunne ikke hentes: '+errText(namesError),
+      'Spillernavne kunne ikke hentes: '+profileErrorText(namesError),
       'error small'
     ));
   }
@@ -577,7 +600,9 @@ async function loadGames(){
     playerBox.append(el('div','Tilmeldte spillere','players-title'));
 
     if(!players.length){
-      playerBox.append(el('div','Ingen tilmeldte endnu.','muted small'));
+      playerBox.append(
+        el('div','Ingen tilmeldte endnu.','muted small')
+      );
     }else{
       players.forEach((player,index)=>{
         const name=names.get(player.user_id)
