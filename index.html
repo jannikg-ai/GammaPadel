@@ -118,6 +118,56 @@ box-shadow:0 0 0 5px #d6f1e3
 .modal-panel{padding:17px}
 .calendar-options{grid-template-columns:1fr}
 }
+
+/* GAMMA PREMIUM — mobilvenligt designsystem */
+:root{color-scheme:dark;--navy:#061b2c;--panel:#102f45;--panel2:#153b52;--mint:#32e2c7;--pale:#b5ffd8;--text:#f4fbff;--sub:#aac3d0;font-family:system-ui,-apple-system,sans-serif;color:var(--text);background:var(--navy)}
+body{background:linear-gradient(160deg,#071929 0%,#0a2639 60%,#061725 100%);min-height:100vh;padding-bottom:82px}
+header{background:#061827;border-bottom:1px solid #285063;padding:20px 18px}
+header h1{letter-spacing:.035em;font-weight:850;color:#f7ffff}
+header h1::first-letter{color:var(--mint)}
+header>div>div{color:var(--sub)}
+main{max-width:850px}
+.card,.game,.my-game{background:linear-gradient(145deg,#15364b,#0c283c);border:1px solid #28536a;color:var(--text);box-shadow:0 8px 28px #0003;border-radius:19px}
+.card{padding:22px}
+h1,h2,h3,.game-date,.my-game-date{color:var(--text)}
+.muted,.small.muted,.game-meta,.my-game-meta,.calendar-help,.password-hint{color:var(--sub)}
+input,select{background:#092337;color:#fff;border:1px solid #42667b}
+input[readonly]{opacity:.8}
+input::placeholder{color:#a0b8c5}
+button{background:var(--mint);color:#052737;font-weight:750}
+button.secondary,.time-slot,.duration-slot{background:#204357;color:#e9faff}
+button.wait-button{background:#295273;color:#e5f6ff}
+button.danger{background:#aa3448;color:white}
+button:focus-visible,input:focus-visible,select:focus-visible{outline-color:var(--mint);box-shadow:0 0 0 4px #32e2c733}
+.my-summary{background:linear-gradient(120deg,#0d5561,#0b314c);border:1px solid #33a7a7}
+.my-stat{background:#ffffff13;border:1px solid #ffffff1a}
+.my-number{color:var(--pale)}
+.my-empty,.players,.game-note,.booking-summary,.calendar-box,.profile-stat{background:#153b50;color:#e9faff;border-color:#326076}
+.game-count{background:#124c51;color:var(--pale)}
+.game-progress span{background:#35546a}
+.game-progress span.filled,.time-slot.selected,.duration-slot.selected{background:var(--mint);color:#062739}
+.game-availability,.profile-stat strong{color:var(--pale)}
+.player-avatar,.profile-avatar,.booking-icon{background:#215b61;color:#a8ffe7}
+.game-tag{background:#245e4d;color:#b9ffdf}
+.wait-tag,.waitlist{background:#173c5a;color:#d4e9ff;border-color:#376083}
+.waitlist h3{color:#d4e9ff}
+.wait-number{background:#285b79;color:white}
+.modal-panel{background:#0d2b40;color:white;border:1px solid #3a6076}
+.modal{background:#020b13dd}
+#notice.error,.error{color:#ffb1b8}
+#notice.success,.success{color:#a7ffdc}
+.premium-hero{position:relative;overflow:hidden;border:1px solid #2b777d;border-radius:22px;padding:25px 22px;margin:16px 0;background:radial-gradient(circle at 90% 20%,#1b8e8d70,transparent 40%),linear-gradient(120deg,#0b4156,#09263c)}
+.premium-hero .eyebrow{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:#a7ffe7;font-weight:800}
+.premium-hero h2{font-size:30px;margin:10px 0 5px}
+.premium-hero p{color:#d3e8ee;margin:0}
+.premium-hero .ball{position:absolute;right:20px;top:19px;font-size:55px;opacity:.45}
+.premium-nav{position:fixed;z-index:15;bottom:0;left:0;right:0;display:flex;justify-content:space-around;background:#071b2cf2;backdrop-filter:blur(18px);border-top:1px solid #376275;padding:9px max(8px,env(safe-area-inset-right)) calc(9px + env(safe-area-inset-bottom))}
+.premium-nav button{background:transparent;color:#a8c5d2;margin:0;padding:6px 8px;min-width:65px;font-size:12px;display:grid;justify-items:center;gap:4px;border-radius:10px}
+.premium-nav button span{font-size:22px}
+.premium-nav button.active{color:var(--mint);background:#173c4a}
+#adminPanel{background:#102f45;color:white}
+@media(max-width:480px){.premium-hero h2{font-size:26px}.card{padding:16px}header h1{font-size:24px}}
+
 </style>
 </head>
 <body>
@@ -160,6 +210,12 @@ box-shadow:0 0 0 5px #d6f1e3
 
 <section id="pendingPanel" class="card hidden"><h2>⏳ Afventer godkendelse</h2><p>Din profil er oprettet, men administratoren skal godkende den, før du kan bruge GAMMAPADEL.</p><button id="pendingRefresh" type="button">Kontrollér godkendelse</button> <button id="pendingLogout" class="secondary" type="button">Log ud</button></section>
 <div id="app" class="hidden">
+<section class="premium-hero" aria-label="Velkommen">
+<div class="ball" aria-hidden="true">🎾</div>
+<div class="eyebrow">Din padelklub</div>
+<h2>Velkommen til GAMMAPADEL</h2>
+<p>Find din næste kamp, og spil med kollegaerne.</p>
+</section>
 
 <section class="card row">
 <div>
@@ -172,7 +228,7 @@ box-shadow:0 0 0 5px #d6f1e3
 </div>
 </section>
 
-<section class="card">
+<section class="card" id="homeSection">
 <div class="my-summary">
 <h2>🎾 Mine kampe</h2>
 <p>Dit personlige overblik</p>
@@ -190,7 +246,7 @@ box-shadow:0 0 0 5px #d6f1e3
 <div id="myGames" aria-live="polite"></div>
 </section>
 
-<section class="card">
+<section class="card" id="createSection">
 <div class="booking-heading">
 <div class="booking-icon">🎾</div>
 <div>
@@ -231,7 +287,7 @@ box-shadow:0 0 0 5px #d6f1e3
 <p class="small muted">Banen bookes separat via PadelDanmark.</p>
 </section>
 
-<section class="card">
+<section class="card" id="matchesSection">
 <div class="row">
 <h2>Kommende kampe</h2>
 <button id="refresh" type="button" class="secondary">Opdatér</button>
@@ -239,6 +295,12 @@ box-shadow:0 0 0 5px #d6f1e3
 <div id="games"></div>
 </section>
 
+<nav class="premium-nav" aria-label="Hovedmenu">
+<button type="button" data-target="homeSection" class="active"><span>⌂</span>Forside</button>
+<button type="button" data-target="matchesSection"><span>▦</span>Kampe</button>
+<button type="button" data-target="createSection"><span>⊕</span>Opret</button>
+<button type="button" id="navProfile"><span>♙</span>Profil</button>
+</nav>
 </div>
 </main>
 
@@ -1508,6 +1570,18 @@ card.append(actions);
 root.append(card);
 }
 }
+
+/* GAMMA PREMIUM NAVIGATION */
+document.querySelectorAll('.premium-nav [data-target]').forEach(button=>{
+ button.addEventListener('click',()=>{
+  const target=document.getElementById(button.dataset.target);
+  if(!target)return;
+  document.querySelectorAll('.premium-nav button').forEach(b=>b.classList.remove('active'));
+  button.classList.add('active');
+  target.scrollIntoView({behavior:'smooth',block:'start'});
+ });
+});
+$('navProfile').addEventListener('click',()=> $('openProfile').click());
 
 /* START APPEN */
 supabase.auth.onAuthStateChange(event=>{
