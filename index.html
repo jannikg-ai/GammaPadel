@@ -4,6 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GAMMAPADEL</title>
+<meta name="theme-color" content="#061b2c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GAMMAPADEL">
+<meta name="description" content="GAMMAPADEL – kampe og fællesskab">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+
 <style>
 :root{font-family:system-ui,-apple-system,sans-serif;color:#17302b;background:#f2f7f4}
 *{box-sizing:border-box}
@@ -1596,6 +1605,13 @@ try{
 await refreshSession();
 }catch(err){
 message('Appen kunne ikke starte: '+errorText(err),true);
+}
+</script>
+<script>
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch(err => console.warn('PWA:', err));
+  });
 }
 </script>
 </body>
