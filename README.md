@@ -1,2 +1,2 @@
-# CollegePadel1
+#KollegaPadel1
 Intern padelapp for kollegaer
