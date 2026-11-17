@@ -24,7 +24,11 @@ button.secondary{background:#e4eee9;color:#194738}
 button.danger{background:#b42332}
 button.wait-button{background:#dbeafe;color:#1e4f87}
 button:disabled{opacity:.5;cursor:not-allowed}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #7dc9aa;outline-offset:2px}
+button:focus-visible,input:focus-visible,select:focus-visible{
+outline:3px solid #48a981;
+outline-offset:3px;
+box-shadow:0 0 0 5px #d6f1e3
+}
 .muted{color:#65766e}
 .error{color:#a32828}
 .success{color:#14704b}
@@ -84,8 +88,6 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .wait-number{display:grid;place-items:center;min-width:28px;height:28px;border-radius:50%;background:#d8e7ff;color:#245589;font-weight:750;font-size:12px}
 .game .actions button{flex:1;min-width:125px}
 .game .actions button.danger{flex:0 1 auto}
-
-/* PROFILVINDUE */
 .modal{position:fixed;inset:0;z-index:20;background:#10251dbb;display:flex;align-items:center;justify-content:center;padding:15px}
 .modal-panel{width:min(100%,540px);max-height:92vh;overflow-y:auto;background:white;border-radius:19px;padding:23px;box-shadow:0 15px 50px #0004}
 .modal-header{display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -101,8 +103,6 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .modal hr{border:0;border-top:1px solid #e2eee6;margin:20px 0}
 .password-hint{font-size:13px;color:#65766e}
 .profile-save{width:100%}
-
-/* NYT: KALENDER */
 .calendar-button{background:#e2f1e9!important;color:#125a41!important;font-weight:700}
 .calendar-box{background:#f1f8f4;border:1px solid #d5e9dc;border-radius:12px;padding:14px;margin-top:12px}
 .calendar-box label{margin:0 0 8px}
@@ -136,12 +136,14 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 <section id="auth" class="card">
 <h2>Log ind</h2>
 <p class="muted">Kun inviterede kollegaer kan bruge appen.</p>
+<form id="loginForm">
 <label for="email">Din personlige e-mail</label>
-<input id="email" type="email" autocomplete="email" placeholder="navn@eksempel.dk">
+<input id="email" type="email" autocomplete="email" required>
 <label for="password">Adgangskode</label>
-<input id="password" type="password" autocomplete="current-password">
-<button id="login">Log ind</button>
-<button id="reset" class="secondary">Glemt adgangskode?</button>
+<input id="password" type="password" autocomplete="current-password" required>
+<button id="login" type="submit">Log ind</button>
+<button id="reset" type="button" class="secondary">Glemt adgangskode?</button>
+</form>
 <p class="small muted">Har du ikke en bruger endnu? Kontakt administratoren.</p>
 </section>
 
@@ -153,8 +155,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 <div class="small muted">Du er logget ind</div>
 </div>
 <div class="actions">
-<button id="openProfile">👤 Min profil</button>
-<button id="logout" class="secondary">Log ud</button>
+<button id="openProfile" type="button">👤 Min profil</button>
+<button id="logout" type="button" class="secondary">Log ud</button>
 </div>
 </section>
 
@@ -185,6 +187,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 </div>
 </div>
 
+<form id="bookingForm">
 <label for="date" class="booking-label">📅 Vælg kampdato</label>
 <input id="date" type="date" required>
 
@@ -206,22 +209,24 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 </div>
 
 <label for="venue">📍 Spillested</label>
-<input id="venue" value="Skinderskovhallen" maxlength="120">
+<input id="venue" value="Skinderskovhallen" maxlength="120" required>
 
 <label for="note">Bemærkning (valgfri)</label>
 <input id="note" maxlength="250" placeholder="Fx niveau eller banebooking">
 
-<button id="create">Opret kamp</button>
+<button id="create" type="submit">Opret kamp</button>
+</form>
 <p class="small muted">Banen bookes separat via PadelDanmark.</p>
 </section>
 
 <section class="card">
 <div class="row">
 <h2>Kommende kampe</h2>
-<button id="refresh" class="secondary">Opdatér</button>
+<button id="refresh" type="button" class="secondary">Opdatér</button>
 </div>
 <div id="games"></div>
 </section>
+
 </div>
 </main>
 
@@ -232,7 +237,7 @@ role="dialog" aria-modal="true" aria-labelledby="profileTitle">
 
 <div class="modal-header">
 <h2 id="profileTitle">👤 Min profil</h2>
-<button id="closeProfile" class="secondary">✕ Luk</button>
+<button id="closeProfile" type="button" class="secondary">✕ Luk</button>
 </div>
 
 <div class="profile-avatar" id="profileAvatar">?</div>
@@ -252,9 +257,9 @@ role="dialog" aria-modal="true" aria-labelledby="profileTitle">
 </div>
 </div>
 
+<form id="profileForm">
 <label for="displayName">Profilnavn</label>
-<input id="displayName" maxlength="80" autocomplete="name"
-placeholder="Dit spillernavn">
+<input id="displayName" maxlength="80" autocomplete="name" required>
 
 <label for="profileEmail">E-mailadresse</label>
 <input id="profileEmail" type="email" readonly>
@@ -269,20 +274,30 @@ placeholder="Dit spillernavn">
 <option value="Meget øvet">Meget øvet</option>
 </select>
 
-<button id="saveProfile" class="profile-save">
+<button id="saveProfile" type="submit" class="profile-save">
 Gem profiloplysninger
 </button>
+</form>
 <p id="profileStatus" class="small muted status"></p>
 
 <hr>
 
 <h3>🔐 Skift adgangskode</h3>
 <p class="password-hint">Vælg en ny adgangskode på mindst 8 tegn.</p>
+
+<form id="passwordForm">
 <label for="newPassword">Ny adgangskode</label>
-<input id="newPassword" type="password" autocomplete="new-password" minlength="8">
+<input id="newPassword" type="password"
+autocomplete="new-password" minlength="8" required>
+
 <label for="confirmPassword">Gentag ny adgangskode</label>
-<input id="confirmPassword" type="password" autocomplete="new-password" minlength="8">
-<button id="changePassword" class="secondary">Skift adgangskode</button>
+<input id="confirmPassword" type="password"
+autocomplete="new-password" minlength="8" required>
+
+<button id="changePassword" type="submit" class="secondary">
+Skift adgangskode
+</button>
+</form>
 <p id="passwordStatus" class="small status"></p>
 
 </section>
@@ -301,6 +316,7 @@ let currentUser=null;
 let profileName='';
 let gamesRequest=0;
 let profileRequest=0;
+let lastProfileFocus=null;
 
 function el(tag,text,cls){
 const node=document.createElement(tag);
@@ -353,7 +369,7 @@ $('app').classList.toggle('hidden',!user);
 if(!user){
 ++profileRequest;
 ++gamesRequest;
-$('profileModal').classList.add('hidden');
+closeProfile();
 $('myGames').replaceChildren();
 $('games').replaceChildren();
 $('myCount').textContent='0';
@@ -369,29 +385,25 @@ if(previousId!==user.id)await loadProfile();
 await loadGames();
 }
 
-$('login').onclick=async()=>{
+$('loginForm').addEventListener('submit',async e=>{
+e.preventDefault();
 const email=$('email').value.trim();
 const password=$('password').value;
-if(!email||!password){
-message('Udfyld e-mail og adgangskode.',true);
-return;
-}
 const button=$('login');
 button.disabled=true;
+
 try{
-const {error}=await supabase.auth.signInWithPassword({email,password});
+const {error}=await supabase.auth.signInWithPassword({
+email,password
+});
 if(error)throw error;
 message('Du er logget ind!');
 await refreshSession();
-}catch(e){
-message('Login mislykkedes: '+errorText(e),true);
+}catch(err){
+message('Login mislykkedes: '+errorText(err),true);
 }finally{
 button.disabled=false;
 }
-};
-
-$('password').addEventListener('keydown',e=>{
-if(e.key==='Enter')$('login').click();
 });
 
 $('reset').onclick=async()=>{
@@ -422,7 +434,7 @@ message('Du er logget ud.');
 await refreshSession();
 };
 
-/* PROFILVINDUE */
+/* PROFILVINDUE OG TASTATURNAVIGATION */
 function updateProfileHeading(){
 const name=profileName||'Min spillerprofil';
 $('profileHeading').textContent=name;
@@ -432,26 +444,57 @@ name.split(/\s+/).slice(0,2)
 .map(x=>x[0]?.toUpperCase()||'').join('');
 }
 
+function closeProfile(){
+const wasOpen=!$('profileModal').classList.contains('hidden');
+$('profileModal').classList.add('hidden');
+if(wasOpen&&lastProfileFocus?.isConnected){
+lastProfileFocus.focus();
+}
+}
+
 $('openProfile').onclick=async()=>{
 if(!currentUser)return;
+lastProfileFocus=document.activeElement;
 $('profileModal').classList.remove('hidden');
-await loadProfile();
-await loadPlayedCount();
+$('displayName').focus();
+await Promise.all([loadProfile(),loadPlayedCount()]);
 };
 
-$('closeProfile').onclick=()=>{
-$('profileModal').classList.add('hidden');
-};
+$('closeProfile').onclick=closeProfile;
 
 $('profileModal').addEventListener('click',e=>{
-if(e.target===$('profileModal')){
-$('profileModal').classList.add('hidden');
-}
+if(e.target===$('profileModal'))closeProfile();
 });
 
+/* Hold Tab og Shift+Tab inde i det åbne profilvindue. */
 document.addEventListener('keydown',e=>{
+const modal=$('profileModal');
+if(modal.classList.contains('hidden'))return;
+
 if(e.key==='Escape'){
-$('profileModal').classList.add('hidden');
+e.preventDefault();
+closeProfile();
+return;
+}
+
+if(e.key!=='Tab')return;
+
+const focusable=[...modal.querySelectorAll(
+'button:not(:disabled),input:not(:disabled),select:not(:disabled)'
+)].filter(node=>node.getClientRects().length);
+
+if(!focusable.length)return;
+
+const first=focusable[0];
+const last=focusable[focusable.length-1];
+const active=document.activeElement;
+
+if(e.shiftKey&&(active===first||!modal.contains(active))){
+e.preventDefault();
+last.focus();
+}else if(!e.shiftKey&&(active===last||!modal.contains(active))){
+e.preventDefault();
+first.focus();
 }
 });
 
@@ -459,7 +502,6 @@ async function loadProfile(){
 if(!currentUser)return;
 const userId=currentUser.id;
 const request=++profileRequest;
-
 status('profileStatus','Henter profil…');
 
 const {data,error}=await supabase.from('profiles')
@@ -467,8 +509,7 @@ const {data,error}=await supabase.from('profiles')
 .eq('id',userId)
 .maybeSingle();
 
-if(currentUser?.id!==userId||
-request!==profileRequest)return;
+if(currentUser?.id!==userId||request!==profileRequest)return;
 
 if(error){
 status('profileStatus',
@@ -486,8 +527,11 @@ updateProfileHeading();
 status('profileStatus','');
 }
 
-$('saveProfile').onclick=async()=>{
+/* Enter i profilnavn gemmer profilen via formularen. */
+$('profileForm').addEventListener('submit',async e=>{
+e.preventDefault();
 if(!currentUser)return;
+
 const name=$('displayName').value.trim();
 const level=$('skillLevel').value;
 
@@ -503,7 +547,9 @@ button.disabled=true;
 
 try{
 const {error}=await supabase.from('profiles').upsert({
-id:userId,display_name:name,skill_level:level||null
+id:userId,
+display_name:name,
+skill_level:level||null
 },{onConflict:'id'});
 
 if(error)throw error;
@@ -515,6 +561,7 @@ await supabase.from('profiles')
 .single();
 
 if(readError)throw readError;
+
 if(saved?.display_name!==name||
 (saved?.skill_level||'')!==level){
 throw new Error('Profiloplysningerne kunne ikke bekræftes.');
@@ -534,17 +581,20 @@ updateProfileHeading();
 status('profileStatus','✓ Profilen er gemt!');
 message('Dine profiloplysninger er opdateret!');
 await loadGames();
-}catch(e){
+
+}catch(err){
 status('profileStatus',
-'Kunne ikke gemme profil: '+errorText(e),true);
+'Kunne ikke gemme profil: '+errorText(err),true);
 }finally{
 button.disabled=false;
 }
-};
+});
 
 /* SKIFT ADGANGSKODE */
-$('changePassword').onclick=async()=>{
+$('passwordForm').addEventListener('submit',async e=>{
+e.preventDefault();
 if(!currentUser)return;
+
 const password=$('newPassword').value;
 const confirmation=$('confirmPassword').value;
 
@@ -553,6 +603,7 @@ status('passwordStatus',
 'Adgangskoden skal være mindst 8 tegn.',true);
 return;
 }
+
 if(password!==confirmation){
 status('passwordStatus',
 'Adgangskoderne er ikke ens.',true);
@@ -565,16 +616,17 @@ button.disabled=true;
 try{
 const {error}=await supabase.auth.updateUser({password});
 if(error)throw error;
+
 $('newPassword').value='';
 $('confirmPassword').value='';
 status('passwordStatus','✓ Adgangskoden er opdateret!');
-}catch(e){
+}catch(err){
 status('passwordStatus',
-'Kunne ikke ændre adgangskode: '+errorText(e),true);
+'Kunne ikke ændre adgangskode: '+errorText(err),true);
 }finally{
 button.disabled=false;
 }
-};
+});
 
 /* KAMPSTATISTIK */
 async function loadPlayedCount(){
@@ -586,12 +638,14 @@ const {data,error}=await supabase.from('game_participants')
 .select('game_id').eq('user_id',userId);
 
 if(currentUser?.id!==userId)return;
+
 if(error){
 $('playedCount').textContent='–';
 return;
 }
 
 const ids=[...new Set((data||[]).map(p=>p.game_id))];
+
 if(!ids.length){
 $('playedCount').textContent='0';
 return;
@@ -603,7 +657,8 @@ const {count,error:countError}=await supabase.from('games')
 .lt('ends_at',new Date().toISOString());
 
 if(currentUser?.id!==userId)return;
-$('playedCount').textContent=countError?'–':String(count??0);
+$('playedCount').textContent=
+countError?'–':String(count??0);
 }
 
 /* BOOKING */
@@ -654,6 +709,9 @@ $('timeGrid').append(button);
 }
 
 document.querySelectorAll('.duration-slot').forEach(button=>{
+button.setAttribute('aria-pressed',
+String(Number(button.dataset.minutes)===durationMinutes));
+
 button.onclick=()=>{
 durationMinutes=Number(button.dataset.minutes);
 document.querySelectorAll('.duration-slot').forEach(x=>{
@@ -675,9 +733,11 @@ $('date').min=$('date').value;
 $('date').addEventListener('change',updateBookingSummary);
 updateBookingSummary();
 
-/* OPRET KAMP */
-$('create').onclick=async()=>{
+/* OPRET KAMP MED ENTER ELLER KNAP */
+$('bookingForm').addEventListener('submit',async e=>{
+e.preventDefault();
 if(!currentUser)return;
+
 const date=$('date').value;
 const start=$('startTime').value;
 const end=$('endTime').value;
@@ -697,6 +757,7 @@ startsAt<=new Date()){
 message('Kampstart skal ligge i fremtiden.',true);
 return;
 }
+
 if(Number.isNaN(endsAt.getTime())||
 endsAt<=startsAt){
 message('Sluttidspunkt skal være efter kampstart.',true);
@@ -711,18 +772,21 @@ const {error}=await supabase.from('games').insert({
 created_by:currentUser.id,
 starts_at:startsAt.toISOString(),
 ends_at:endsAt.toISOString(),
-location:venue,notes:note||null
+location:venue,
+notes:note||null
 });
+
 if(error)throw error;
 $('note').value='';
 message('Kampen er oprettet!');
 await loadGames();
-}catch(e){
-message('Kunne ikke oprette kamp: '+errorText(e),true);
+
+}catch(err){
+message('Kunne ikke oprette kamp: '+errorText(err),true);
 }finally{
 button.disabled=false;
 }
-};
+});
 
 /* TILMELDING OG VENTELISTE */
 async function gameAction(gameId,action,button){
@@ -743,14 +807,18 @@ not_joined:'Du var ikke tilmeldt.'
 try{
 const {data,error}=await supabase.rpc(
 'padel_game_action',{
-p_game_id:gameId,p_action:action
+p_game_id:gameId,
+p_action:action
 });
+
 if(error)throw error;
 if(currentUser?.id!==userId)return;
+
 message(messages[data]||'Handlingen er gennemført.');
-}catch(e){
+
+}catch(err){
 if(currentUser?.id===userId){
-message('Kunne ikke gennemføre handlingen: '+errorText(e),true);
+message('Kunne ikke gennemføre handlingen: '+errorText(err),true);
 }
 }finally{
 button.disabled=false;
@@ -760,19 +828,22 @@ if(currentUser?.id===userId)await loadGames();
 
 function actionButton(label,gameId,action,cls=''){
 const button=el('button',label,cls);
+button.type='button';
 button.onclick=()=>gameAction(gameId,action,button);
 return button;
 }
 
-/* NYT: KALENDERFUNKTION */
+/* KALENDERFUNKTION */
 function calendarDates(game){
 const start=new Date(game.starts_at);
 const end=new Date(game.ends_at);
+
 if(!Number.isFinite(start.getTime())||
 !Number.isFinite(end.getTime())||
 end<=start){
 throw new Error('Kampen har ugyldige kalenderdatoer.');
 }
+
 return {start,end};
 }
 
@@ -800,11 +871,12 @@ return String(text||'')
 }
 
 function foldIcsLine(line){
-const bytes=new TextEncoder();
+const encoder=new TextEncoder();
 const chunks=[];
 let current='';
+
 for(const char of line){
-if(bytes.encode(current+char).length>73){
+if(encoder.encode(current+char).length>73){
 chunks.push(current);
 current=' '+char;
 }else{
@@ -817,6 +889,7 @@ return chunks.join('\r\n');
 
 function downloadCalendar(game,reminder){
 const {start,end}=calendarDates(game);
+
 const lines=[
 'BEGIN:VCALENDAR',
 'VERSION:2.0',
@@ -851,9 +924,11 @@ type:'text/calendar;charset=utf-8'
 });
 const url=URL.createObjectURL(blob);
 const link=document.createElement('a');
+
 link.href=url;
 link.download='KollegaPadel-'+
 start.toISOString().slice(0,10)+'.ics';
+
 document.body.append(link);
 link.click();
 link.remove();
@@ -869,6 +944,7 @@ dates:utcCalendarDate(start)+'/'+utcCalendarDate(end),
 details:calendarDescription(game),
 location:game.location||''
 });
+
 window.open(
 'https://calendar.google.com/calendar/render?'+params,
 '_blank','noopener,noreferrer'
@@ -886,6 +962,7 @@ enddt:end.toISOString(),
 body:calendarDescription(game),
 location:game.location||''
 });
+
 window.open(
 'https://outlook.live.com/calendar/0/deeplink/compose?'+params,
 '_blank','noopener,noreferrer'
@@ -901,6 +978,7 @@ const box=el('div',undefined,'calendar-box hidden');
 const label=el('label','Påmindelse før kampstart');
 const select=el('select');
 const selectId='reminder-'+String(game.id);
+
 select.id=selectId;
 label.htmlFor=selectId;
 
@@ -917,7 +995,6 @@ select.append(option);
 });
 
 const options=el('div',undefined,'calendar-options');
-
 const apple=el('button','🍎 Apple / iPhone','secondary');
 const google=el('button','Google Kalender');
 const outlook=el('button','Outlook','secondary');
@@ -929,26 +1006,32 @@ outlook.type='button';
 apple.onclick=()=>{
 try{
 downloadCalendar(game,Number(select.value));
-}catch(e){message(errorText(e),true)}
+}catch(err){
+message(errorText(err),true);
+}
 };
 
 google.onclick=()=>{
 try{
 googleCalendar(game);
-}catch(e){message(errorText(e),true)}
+}catch(err){
+message(errorText(err),true);
+}
 };
 
 outlook.onclick=()=>{
 try{
 outlookCalendar(game);
-}catch(e){message(errorText(e),true)}
+}catch(err){
+message(errorText(err),true);
+}
 };
 
 options.append(apple,google,outlook);
 box.append(
 label,select,options,
 el('p',
-'Apple bruger en kalenderfil med den valgte påmindelse. I Google og Outlook kan du vælge påmindelse, når du gemmer begivenheden.',
+'Apple bruger en kalenderfil med den valgte påmindelse. I Google og Outlook vælges påmindelsen, når du gemmer begivenheden.',
 'calendar-help')
 );
 
@@ -974,6 +1057,7 @@ const joinedIds=new Set(
 participants.filter(p=>p.user_id===userId)
 .map(p=>String(p.game_id))
 );
+
 const waitingIds=new Set(
 waitlist.filter(p=>p.user_id===userId)
 .map(p=>String(p.game_id))
@@ -1035,6 +1119,7 @@ if(myGames.length){
 root.append(el('h3','Mine tilmeldte kampe'));
 myGames.forEach(g=>addCard(g,false));
 }
+
 if(myWaiting.length){
 root.append(el('h3','Mine ventelister'));
 myWaiting.forEach(g=>addCard(g,true));
@@ -1046,6 +1131,7 @@ $('refresh').onclick=loadGames;
 
 async function loadGames(){
 if(!currentUser)return;
+
 const userId=currentUser.id;
 const request=++gamesRequest;
 const root=$('games');
@@ -1061,6 +1147,7 @@ const {data:games,error}=await supabase.from('games')
 .order('starts_at',{ascending:true});
 
 if(outdated())return;
+
 if(error){
 root.replaceChildren(el('p',
 'Kunne ikke hente kampe: '+errorText(error),'error'));
@@ -1082,7 +1169,9 @@ const ids=games.map(g=>g.id);
 
 const [pResult,wResult]=await Promise.all([
 supabase.from('game_participants')
-.select('game_id,user_id').in('game_id',ids),
+.select('game_id,user_id')
+.in('game_id',ids),
+
 supabase.from('game_waitlist')
 .select('id,game_id,user_id,created_at')
 .in('game_id',ids)
@@ -1122,6 +1211,7 @@ await supabase.from('profiles')
 .in('id',playerIds);
 
 if(outdated())return;
+
 if(profileErr){
 namesError=profileErr;
 }else{
@@ -1149,6 +1239,7 @@ for(const game of games){
 const players=participants.filter(
 p=>String(p.game_id)===String(game.id)
 );
+
 const queue=waitlist.filter(
 w=>String(w.game_id)===String(game.id)
 );
@@ -1171,10 +1262,12 @@ el('div','📍 '+(game.location||'Ikke angivet'),'game-meta')
 if(joined){
 info.append(el('span','✓ Du er tilmeldt','game-tag'));
 }
+
 if(waiting){
 const position=queue.findIndex(
 w=>w.user_id===userId
 )+1;
+
 info.append(el('span',
 `⏳ Venteliste nr. ${position}`,'wait-tag'));
 }
@@ -1184,10 +1277,12 @@ count.append(
 el('strong',`${players.length}/4`),
 el('span','SPILLERE')
 );
+
 top.append(info,count);
 card.append(top);
 
 const progress=el('div',undefined,'game-progress');
+
 for(let i=0;i<4;i++){
 progress.append(el('span',undefined,
 i<players.length?'filled':''));
@@ -1217,18 +1312,22 @@ playerBox.append(el('div',
 
 for(const player of players){
 const name=playerName(player.user_id);
+
 const initials=name==='Navn ikke angivet'?'?':
 name.split(/\s+/).slice(0,2)
 .map(part=>part[0]?.toUpperCase()||'').join('');
 
 const playerRow=el('div',undefined,'player');
+
 playerRow.append(
 el('span',initials,'player-avatar'),
 el('span',name+
 (player.user_id===userId?' (dig)':''))
 );
+
 playerBox.append(playerRow);
 }
+
 card.append(playerBox);
 
 if(queue.length){
@@ -1238,17 +1337,20 @@ waitBox.append(el('h3',
 
 queue.forEach((person,index)=>{
 const item=el('div',undefined,'wait-person');
+
 item.append(
 el('span',String(index+1),'wait-number'),
 el('span',playerName(person.user_id)+
 (person.user_id===userId?' (dig)':''))
 );
+
 waitBox.append(item);
 });
 
 waitBox.append(el('p',
 'Første spiller får automatisk plads ved afmelding.',
 'small muted'));
+
 card.append(waitBox);
 }
 
@@ -1271,6 +1373,7 @@ actions.append(actionButton(
 
 if(game.created_by===userId){
 const deleteBtn=el('button','Slet kamp','danger');
+deleteBtn.type='button';
 
 deleteBtn.onclick=async()=>{
 if(!confirm(
@@ -1278,22 +1381,29 @@ if(!confirm(
 ))return;
 
 deleteBtn.disabled=true;
+
 try{
 const {data,error}=await supabase.rpc(
 'delete_own_game',{p_game_id:game.id}
 );
+
 if(error)throw error;
+
 if(data!==true){
-throw new Error('Databasen bekræftede ikke sletningen.');
+throw new Error(
+'Databasen bekræftede ikke sletningen.');
 }
+
 message('Kampen er slettet.');
 await loadGames();
-}catch(e){
+
+}catch(err){
 message('Kunne ikke slette kampen: '+
-errorText(e),true);
+errorText(err),true);
 deleteBtn.disabled=false;
 }
 };
+
 actions.append(deleteBtn);
 }
 
@@ -1313,8 +1423,8 @@ refreshSession().catch(console.error);
 
 try{
 await refreshSession();
-}catch(e){
-message('Appen kunne ikke starte: '+errorText(e),true);
+}catch(err){
+message('Appen kunne ikke starte: '+errorText(err),true);
 }
 </script>
 </body>
